@@ -329,7 +329,7 @@
     <p class="subtitle">Guess the state!</p>
     <p class="practice-msg">Practice more.</p>
     <div class="mode-btns">
-      <a href="mapgame.html" class="mode-btns-link">TODAY'S GAME</a>
+      <a href="index.html" class="mode-btns-link">TODAY'S GAME</a>
       <button type="button" class="active">PRACTICE</button>
       <button type="button" class="btn-moon" id="btn-moon" title="Dark mode – click for light" aria-label="Switch to light mode">&#127769;</button>
     </div>
@@ -345,7 +345,7 @@
       <div class="start-overlay" id="start-overlay">
         <button type="button" class="btn-start" id="btn-start">START</button>
       </div>
-      <iframe id="map-frame" src="index.html" title="Nigeria map"></iframe>
+      <iframe id="map-frame" src="map.html" title="Nigeria map"></iframe>
     </div>
   </div>
 
@@ -679,7 +679,7 @@
         if (e.data && e.data.type === 'map-click' && e.data.state) handleMapClick(e.data.state);
       });
 
-      document.querySelectorAll('.mode-btns a[href="mapgame.html"]').forEach(function (a) {
+      document.querySelectorAll('.mode-btns a[href="index.html"]').forEach(function (a) {
         a.addEventListener('click', function () { try { localStorage.setItem('mapgame_mode', 'daily'); } catch (e) {} });
       });
 
