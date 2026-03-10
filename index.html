@@ -192,6 +192,188 @@
       height: 100%;
       display: block;
     }
+    /* Mobile fullscreen map overlay + floating hints */
+    #mobile-map-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      background: #000;
+      display: none;
+      flex-direction: column;
+    }
+    #mobile-map-inner {
+      flex: 1;
+      position: relative;
+      min-height: 0;
+    }
+    #mobile-map-inner iframe {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+    }
+    #mobile-hints-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1200;
+      display: flex;
+      justify-content: center;
+      padding-top: max(8px, env(safe-area-inset-top));
+      pointer-events: none;
+      transform: translateY(-100%);
+      transition: transform 0.35s ease-out;
+    }
+    #mobile-hints-bar.visible {
+      transform: translateY(0);
+    }
+    #mobile-hints-bar .hint-bar-inner {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      pointer-events: auto;
+    }
+    #mobile-hints-content {
+      max-width: 92%;
+      background: rgba(0, 0, 0, 0.9);
+      color: #f9fafb;
+      padding: 0.5rem 1rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      line-height: 1.4;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+      font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
+    }
+    #mobile-hints-minimize {
+      flex-shrink: 0;
+      width: 28px;
+      height: 28px;
+      border: none;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.2);
+      color: #f9fafb;
+      font-size: 0.9rem;
+      line-height: 1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+    }
+    #mobile-hints-icon {
+      display: none;
+      pointer-events: auto;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.85);
+      color: #f9fafb;
+      font-size: 1.4rem;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+      cursor: default;
+    }
+    #mobile-hints-bar.minimized .hint-bar-inner {
+      display: none !important;
+    }
+    #mobile-hints-bar.minimized #mobile-hints-icon {
+      display: flex;
+    }
+    #mobile-hints-bar.minimized {
+      justify-content: flex-end;
+      padding-right: 12px;
+    }
+    #mobile-hints-bar.minimized.visible {
+      transform: translateY(0);
+    }
+    @media (max-width: 768px) {
+      .rainbow-wrap {
+        display: none;
+      }
+      #mobile-map-overlay {
+        display: flex;
+      }
+      #top-bar-wrap {
+        position: relative;
+        z-index: 1002;
+        transition: transform 0.3s ease, border-radius 0.3s ease, padding 0.3s ease, box-shadow 0.3s ease;
+      }
+      #top-bar-wrap.minimized {
+        position: fixed;
+        top: max(8px, env(safe-area-inset-top));
+        right: 12px;
+        left: auto;
+        width: auto;
+        max-width: none;
+        padding: 0.35rem 0.65rem;
+        border-radius: 999px;
+        background: #1e1e2e;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+        cursor: pointer;
+      }
+      #top-bar-wrap.minimized .header {
+        display: none;
+      }
+      #top-bar-wrap.minimized .game-hud {
+        margin: 0;
+        padding: 0;
+        gap: 1rem;
+        font-size: 0.5rem;
+      }
+      #top-bar-wrap.minimized .game-hud .hearts {
+        font-size: 0.9rem;
+      }
+      #top-bar-wrap.minimized .game-hud .timer {
+        font-size: 0.75rem;
+      }
+      .header,
+      .game-hud {
+        position: relative;
+        z-index: 1002;
+        background: transparent;
+      }
+      #top-bar-wrap:not(.minimized) .header,
+      #top-bar-wrap:not(.minimized) .game-hud {
+        background: #1e1e2e;
+      }
+      .mobile-start-overlay-wrap {
+        position: fixed;
+        inset: 0;
+        z-index: 1002;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(30, 30, 46, 0.85);
+      }
+      .mobile-start-overlay-wrap.hidden {
+        display: none;
+      }
+      html.light-mode #top-bar-wrap.minimized {
+        background: #f5f5f5;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+      }
+      html.light-mode #top-bar-wrap:not(.minimized) .header,
+      html.light-mode #top-bar-wrap:not(.minimized) .game-hud {
+        background: #f5f5f5;
+      }
+      #mobile-hints-bar {
+        top: 52px;
+        padding-top: 0.5rem;
+      }
+      #mobile-hints-bar.minimized {
+        top: auto;
+        left: auto;
+        right: 12px;
+        bottom: 100px;
+        width: auto;
+        padding: 0;
+        padding-right: 0;
+      }
+    }
     .start-overlay {
       position: absolute;
       inset: 0;
@@ -416,22 +598,38 @@
     html.light-mode .hint-slot .hint-num { color: #2b6cb0; }
     html.light-mode .hint-slot .hint-highlight { color: #2b6cb0; }
     html.light-mode .hint-slot .hint-highlight.alt { color: #c53030; }
+    html.light-mode #mobile-hints-content {
+      background: rgba(15, 23, 42, 0.96);
+      color: #f9fafb;
+    }
   </style>
 </head>
 <body>
-  <header class="header">
-    <h1 class="game-name">Mili</h1>
-    <p class="subtitle">Guess the state!</p>
-    <div class="mode-btns">
-      <button type="button" id="btn-daily" class="active" data-mode="daily">TODAY'S GAME</button>
-      <a href="practice.html" class="mode-btns-link" id="link-practice">PRACTICE</a>
-      <button type="button" class="btn-moon" id="btn-moon" title="Night mode" aria-label="Night mode">&#127769;</button>
+  <div id="mobile-map-overlay">
+    <div id="mobile-map-inner"></div>
+  </div>
+  <div id="mobile-hints-bar">
+    <div class="hint-bar-inner">
+      <div id="mobile-hints-content"></div>
+      <button type="button" id="mobile-hints-minimize" aria-label="Minimize hint">&#10005;</button>
     </div>
-  </header>
-
-  <div class="game-hud">
-    <div class="hearts" id="hearts"></div>
-    <div class="timer" id="timer">00:00.000</div>
+    <div id="mobile-hints-icon" aria-hidden="true">&#128161;</div>
+  </div>
+  <div class="mobile-start-overlay-wrap" id="mobile-start-wrap" style="display: none;"></div>
+  <div id="top-bar-wrap">
+    <header class="header">
+      <h1 class="game-name">Mili</h1>
+      <p class="subtitle">Guess the state!</p>
+      <div class="mode-btns">
+        <button type="button" id="btn-daily" class="active" data-mode="daily">TODAY'S GAME</button>
+        <a href="practice.html" class="mode-btns-link" id="link-practice">PRACTICE</a>
+        <button type="button" class="btn-moon" id="btn-moon" title="Night mode" aria-label="Night mode">&#127769;</button>
+      </div>
+    </header>
+    <div class="game-hud">
+      <div class="hearts" id="hearts"></div>
+      <div class="timer" id="timer">00:00.000</div>
+    </div>
   </div>
 
   <div class="rainbow-wrap">
@@ -598,6 +796,11 @@
       var resultsFacts = document.getElementById('results-facts');
 
       var hintsGridEl = document.getElementById('hints-grid');
+      var mobileOverlay = document.getElementById('mobile-map-overlay');
+      var mobileOverlayInner = document.getElementById('mobile-map-inner');
+      var mobileHintsBar = document.getElementById('mobile-hints-bar');
+      var mobileHintsContent = document.getElementById('mobile-hints-content');
+      var topBarWrap = document.getElementById('top-bar-wrap');
 
       function renderHearts() {
         heartsEl.innerHTML = '';
@@ -634,6 +837,10 @@
           content.appendChild(text);
           slot.appendChild(content);
           hintsGridEl.appendChild(slot);
+        }
+        if (revealed > 0 && targetState && hintOrder.length === NUM_HINTS) {
+          var currentHint = getHint(targetState, hintOrder[revealed - 1]);
+          showMobileHint(currentHint);
         }
       }
 
@@ -743,6 +950,48 @@
         }
       }
 
+      function isMobile() {
+        return window.innerWidth <= 768;
+      }
+
+      var mobileStartWrap = document.getElementById('mobile-start-wrap');
+      function setupMobileMapOverlay() {
+        if (!mobileOverlay || !mobileOverlayInner || !mapFrame) return;
+        if (!isMobile()) {
+          var outer = document.querySelector('.map-outer');
+          if (outer) {
+            if (mapFrame.parentNode !== outer) outer.appendChild(mapFrame);
+            if (startOverlay.parentNode !== outer) outer.appendChild(startOverlay);
+          }
+          mobileOverlay.style.display = 'none';
+          if (mobileStartWrap) {
+            mobileStartWrap.style.display = 'none';
+            mobileStartWrap.classList.remove('hidden');
+          }
+          if (topBarWrap) topBarWrap.classList.remove('minimized');
+          return;
+        }
+        if (mapFrame.parentNode !== mobileOverlayInner) {
+          mobileOverlayInner.appendChild(mapFrame);
+        }
+        mobileOverlay.style.display = 'flex';
+        if (mobileStartWrap && startOverlay && startOverlay.parentNode !== mobileStartWrap) {
+          mobileStartWrap.appendChild(startOverlay);
+          mobileStartWrap.style.display = startOverlay.classList.contains('hidden') ? 'none' : 'flex';
+        }
+      }
+
+      function showMobileHint(html) {
+        if (!isMobile() || !mobileHintsBar || !mobileHintsContent) return;
+        mobileHintsBar.classList.remove('minimized');
+        mobileHintsContent.innerHTML = html || 'Hint';
+        mobileHintsBar.classList.add('visible');
+        if (showMobileHint._hideTimer) {
+          clearTimeout(showMobileHint._hideTimer);
+          showMobileHint._hideTimer = null;
+        }
+      }
+
       function showGameOver(won) {
         stopTimer();
         gameOverSection.classList.add('visible');
@@ -775,6 +1024,8 @@
         gameOverSection.classList.remove('visible');
         resetMapColors();
         startOverlay.classList.add('hidden');
+        if (mobileStartWrap) mobileStartWrap.style.display = 'none';
+        if (isMobile() && topBarWrap) topBarWrap.classList.add('minimized');
         renderHearts();
         renderHints();
         startTimer();
@@ -807,7 +1058,6 @@
         if (livesLeft <= 0) showGameOver(false);
       }
 
-      var mapFrame = document.querySelector('.map-outer iframe');
       var btnPlayAgain = document.getElementById('btn-play-again');
       var btnMoon = document.getElementById('btn-moon');
 
@@ -880,6 +1130,28 @@
       window.addEventListener('message', function (e) {
         if (e.data && e.data.type === 'map-click' && e.data.state) handleMapClick(e.data.state);
       });
+
+      setupMobileMapOverlay();
+      window.addEventListener('resize', setupMobileMapOverlay);
+
+      if (topBarWrap) {
+        topBarWrap.addEventListener('click', function (e) {
+          if (isMobile() && topBarWrap.classList.contains('minimized')) {
+            e.preventDefault();
+            e.stopPropagation();
+            topBarWrap.classList.remove('minimized');
+          }
+        });
+      }
+      var mobileHintsMinimize = document.getElementById('mobile-hints-minimize');
+      if (mobileHintsMinimize && mobileHintsBar) {
+        mobileHintsMinimize.addEventListener('click', function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          mobileHintsBar.classList.add('minimized');
+          mobileHintsBar.classList.add('visible');
+        });
+      }
 
       applyDailyUI();
       renderHearts();
