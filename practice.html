@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mili – Practice</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,600;1,9..40,400&family=Press+Start+2P&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    html { font-size: clamp(14px, 2.5vw, 16px); }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      min-height: 100dvh;
+      width: 100%;
+      max-width: 100vw;
+      overflow-x: hidden;
+      background: #1e1e2e;
+      color: #e0e0e0;
+      font-family: 'Press Start 2P', monospace;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 0.5rem 0.75rem 1.5rem;
+      padding-left: max(0.75rem, env(safe-area-inset-left));
+      padding-right: max(0.75rem, env(safe-area-inset-right));
+      padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 0.5rem;
+      width: 100%;
+      max-width: 100%;
+      padding: 0 0.25rem;
+    }
+    .game-name {
+      font-size: clamp(1rem, 5vw, 1.4rem);
+      letter-spacing: 0.1em;
+      color: #fff;
+      margin: 0 0 0.25rem;
+    }
+    .subtitle {
+      color: #ff9f43;
+      font-size: clamp(0.5rem, 2.5vw, 0.75rem);
+      margin-bottom: 0.75rem;
+      padding: 0 0.25rem;
+    }
+    html.light-mode .game-name { color: #1a202c; }
+    .mode-btns {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.4rem;
+      margin-bottom: 1rem;
+      width: 100%;
+      padding: 0 0.25rem;
+    }
+    .mode-btns button {
+      font-family: inherit;
+      font-size: clamp(0.4rem, 2vw, 0.6rem);
+      padding: 0.45rem 0.6rem;
+      background: transparent;
+      color: #69f0ae;
+      border: 2px solid #69f0ae;
+      border-radius: 4px;
+      cursor: default;
+      transition: all 0.2s;
+    }
+    .mode-btns button.active {
+      background: #69f0ae;
+      color: #1e1e2e;
+    }
+    .mode-btns button,
+    .mode-btns .mode-btns-link {
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .mode-btns .mode-btns-link {
+      font-family: inherit;
+      font-size: clamp(0.4rem, 2vw, 0.6rem);
+      padding: 0.45rem 0.6rem;
+      color: #69f0ae;
+      border: 2px solid #69f0ae;
+      border-radius: 4px;
+      text-decoration: none;
+      transition: all 0.2s;
+      box-sizing: border-box;
+    }
+    .mode-btns .mode-btns-link:hover { background: rgba(105, 240, 174, 0.15); }
+    .mode-btns .btn-moon {
+      padding: 0.55rem 0.75rem;
+      font-size: 1.25rem;
+      font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', 'Twemoji Mozilla', sans-serif !important;
+      line-height: 1;
+      min-width: 2.5rem;
+      cursor: pointer;
+    }
+    html.light-mode .mode-btns .mode-btns-link { color: #2f8558; border-color: #2f8558; }
+    html.light-mode .mode-btns .mode-btns-link:hover { background: rgba(45, 133, 88, 0.12); }
+    html.light-mode .mode-btns button.active { background: #2f8558; color: #fff; }
+    .practice-msg {
+      font-size: clamp(0.4rem, 2vw, 0.5rem);
+      color: #69f0ae;
+      margin-bottom: 0.5rem;
+    }
+    html.light-mode .practice-msg { color: #2f8558; }
+    .game-hud {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      max-width: min(760px, 100%);
+      margin-bottom: 0.5rem;
+      padding: 0 0.5rem;
+      font-size: 0.5rem;
+    }
+    .hearts { display: flex; gap: 4px; font-size: clamp(0.85rem, 3vw, 1.1rem); max-width: 100%; }
+    .hearts span {
+      color: #e74c3c;
+      font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif;
+    }
+    .hearts span.lost { color: #444; opacity: 0.6; }
+    .timer { color: #fff; letter-spacing: 0.05em; font-size: clamp(1rem, 4vw, 1.5rem); }
+    .rainbow-wrap {
+      padding: 6px;
+      width: 100%;
+      max-width: min(760px, 100%);
+      background: linear-gradient(90deg, #e74c3c, #f39c12, #f1c40f, #27ae60, #3498db, #9b59b6, #e74c3c);
+      background-size: 400% 100%;
+      border-radius: 12px;
+      animation: rainbow-border 8s linear infinite;
+    }
+    @keyframes rainbow-border {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 400% 50%; }
+    }
+    .map-outer {
+      background: #282a36;
+      border-radius: 6px;
+      position: relative;
+      overflow: hidden;
+      width: 100%;
+      max-width: 744px;
+      height: clamp(220px, 50vmin, 420px);
+    }
+    .map-outer iframe { border: none; width: 100%; height: 100%; display: block; }
+    .start-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(30, 30, 46, 0.45);
+      z-index: 10;
+    }
+    .start-overlay.hidden { display: none; }
+    .btn-start {
+      font-family: inherit;
+      font-size: clamp(0.5rem, 2.5vw, 0.75rem);
+      padding: clamp(0.6rem, 2vw, 1rem) clamp(1rem, 4vw, 2.5rem);
+      background: #69f0ae;
+      color: #1e1e2e;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      box-shadow: 0 4px 0 #4ade80, 0 6px 12px rgba(0,0,0,0.3);
+      transition: transform 0.1s, box-shadow 0.1s;
+    }
+    .btn-start:hover {
+      transform: translateY(1px);
+      box-shadow: 0 3px 0 #4ade80, 0 4px 8px rgba(0,0,0,0.3);
+    }
+    .btn-start:active {
+      transform: translateY(3px);
+      box-shadow: 0 1px 0 #4ade80, 0 2px 4px rgba(0,0,0,0.3);
+    }
+    .game-over-section {
+      display: none;
+      text-align: center;
+      margin-top: 1rem;
+      max-width: min(760px, 100%);
+      width: 100%;
+      padding: 0 0.5rem;
+    }
+    .game-over-section.visible { display: block; }
+    .game-over-section .game-over-text {
+      font-size: clamp(0.5rem, 2.2vw, 0.85rem);
+      color: #fff;
+      margin-bottom: 0.5rem;
+    }
+    .game-over-section .game-id {
+      font-size: clamp(0.4rem, 1.8vw, 0.55rem);
+      color: #888;
+      margin-bottom: 0.75rem;
+    }
+    .game-over-btns { display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; margin-bottom: 1rem; }
+    .btn-results, .btn-play-again {
+      font-family: inherit;
+      font-size: clamp(0.45rem, 2vw, 0.65rem);
+      padding: clamp(0.5rem, 2vw, 0.85rem) clamp(0.75rem, 3vw, 1.75rem);
+      min-height: 44px;
+      background: #69f0ae;
+      color: #1e1e2e;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .btn-results:hover, .btn-play-again:hover { filter: brightness(1.1); }
+    .results-facts {
+      text-align: left;
+      font-size: clamp(0.45rem, 2vw, 0.7rem);
+      line-height: 1.8;
+      color: #b0b0b0;
+      max-width: 100%;
+      margin: 0 auto;
+    }
+    .results-facts .highlight { color: #69f0ae; }
+    .hints-section {
+      margin-top: 0.75rem;
+      max-width: min(520px, 100%);
+      width: 100%;
+      margin-left: auto;
+      margin-right: auto;
+      padding: 0 0.5rem;
+      font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
+    }
+    .hints-section h3 {
+      font-size: clamp(0.45rem, 2vw, 0.6rem);
+      color: #69f0ae;
+      margin: 0 0 0.35rem;
+      font-family: 'DM Sans', system-ui, sans-serif;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      line-height: 1.4;
+    }
+    .hints-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: repeat(6, auto);
+      grid-auto-flow: column;
+      gap: 6px 12px;
+      row-gap: 6px;
+    }
+    @media (max-width: 480px) {
+      .hints-grid {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+        grid-auto-flow: row;
+      }
+    }
+    .hint-slot {
+      background: rgba(40, 42, 54, 0.95);
+      border: 1px solid #44475a;
+      border-radius: 4px;
+      padding: 0.4rem 0.6rem;
+      font-size: clamp(0.65rem, 2.2vw, 0.85rem);
+      line-height: 1.35;
+      color: #e8e8e8;
+      min-height: 2.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
+      letter-spacing: 0.01em;
+    }
+    .hint-slot.revealed {
+      border-color: #44475a;
+      color: #f0f0f0;
+      font-size: 0.85rem;
+    }
+    .hint-slot.revealed .hint-text { font-size: inherit; line-height: 1.35; }
+    .hint-slot.locked {
+      width: 10px;
+      height: 10px;
+      min-height: 10px;
+      padding: 0;
+      margin: 0;
+      border: none;
+      border-radius: 1px;
+      background: rgba(255, 255, 255, 0.85);
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.2);
+    }
+    .hint-slot.locked .hint-content { display: none; }
+    .hint-slot .hint-num {
+      flex-shrink: 0;
+      min-width: 1.25rem;
+      color: #6ed3cf;
+      font-weight: 600;
+      font-size: clamp(0.6rem, 2vw, 0.75rem);
+    }
+    .hint-slot .hint-text { flex: 1; }
+    .hint-slot .hint-highlight { color: #6ed3cf; font-weight: 600; }
+    .hint-slot .hint-highlight.alt { color: #fd6860; }
+    /* Light mode – same as today's game */
+    html.light-mode body { background: #f5f5f5; color: #2d3748; }
+    html.light-mode .subtitle { color: #c05621; }
+    html.light-mode .hearts span { color: #c53030; }
+    html.light-mode .hearts span.lost { color: #a0aec0; opacity: 0.7; }
+    html.light-mode .timer { color: #2d3748; }
+    html.light-mode .map-outer { background: #e2e8f0; }
+    html.light-mode .start-overlay { background: rgba(245, 245, 245, 0.7); }
+    html.light-mode .game-over-section .game-over-text { color: #2d3748; }
+    html.light-mode .game-over-section .game-id { color: #718096; }
+    html.light-mode .results-facts { color: #4a5568; }
+    html.light-mode .results-facts .highlight { color: #2f8558; }
+    html.light-mode .hints-section h3 { color: #2f8558; }
+    html.light-mode .hint-slot {
+      background: rgba(255, 255, 255, 0.95);
+      border-color: #cbd5e0;
+      color: #2d3748;
+    }
+    html.light-mode .hint-slot.revealed { border-color: #cbd5e0; color: #1a202c; }
+    html.light-mode .hint-slot.locked {
+      background: rgba(0, 0, 0, 0.75);
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.2);
+    }
+    html.light-mode .hint-slot .hint-num { color: #2b6cb0; }
+    html.light-mode .hint-slot .hint-highlight { color: #2b6cb0; }
+    html.light-mode .hint-slot .hint-highlight.alt { color: #c53030; }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <h1 class="game-name">Mili</h1>
+    <p class="subtitle">Guess the state!</p>
+    <p class="practice-msg">Practice more.</p>
+    <div class="mode-btns">
+      <a href="mapgame.html" class="mode-btns-link">TODAY'S GAME</a>
+      <button type="button" class="active">PRACTICE</button>
+      <button type="button" class="btn-moon" id="btn-moon" title="Dark mode – click for light" aria-label="Switch to light mode">&#127769;</button>
+    </div>
+  </header>
+
+  <div class="game-hud">
+    <div class="hearts" id="hearts"></div>
+    <div class="timer" id="timer">00:00.000</div>
+  </div>
+
+  <div class="rainbow-wrap">
+    <div class="map-outer">
+      <div class="start-overlay" id="start-overlay">
+        <button type="button" class="btn-start" id="btn-start">START</button>
+      </div>
+      <iframe id="map-frame" src="index.html" title="Nigeria map"></iframe>
+    </div>
+  </div>
+
+  <section class="game-over-section" id="game-over">
+    <p class="game-over-text">Game over...</p>
+    <p class="game-id" id="game-id">Practice #1</p>
+    <div class="game-over-btns">
+      <button type="button" class="btn-results" id="btn-results">RESULTS</button>
+      <button type="button" class="btn-play-again" id="btn-play-again">PLAY AGAIN</button>
+    </div>
+    <div class="results-facts" id="results-facts"></div>
+  </section>
+
+  <div class="hints-section" id="hints-section">
+    <h3>Hints (1 revealed at start; each wrong guess reveals another)</h3>
+    <div class="hints-grid" id="hints-grid"></div>
+  </div>
+
+  <script>
+    (function () {
+      var STATE_CAPITALS = {
+        'Abia': 'Umuahia', 'Adamawa': 'Yola', 'Akwa Ibom': 'Uyo', 'Anambra': 'Awka',
+        'Bauchi': 'Bauchi', 'Bayelsa': 'Yenagoa', 'Benue': 'Makurdi', 'Borno': 'Maiduguri',
+        'Cross River': 'Calabar', 'Delta': 'Asaba', 'Ebonyi': 'Abakaliki', 'Edo': 'Benin City',
+        'Ekiti': 'Ado-Ekiti', 'Enugu': 'Enugu', 'Federal Capital Territory': 'Abuja',
+        'Gombe': 'Gombe', 'Imo': 'Owerri', 'Jigawa': 'Dutse', 'Kaduna': 'Kaduna', 'Kano': 'Kano',
+        'Katsina': 'Katsina', 'Kebbi': 'Birnin Kebbi', 'Kogi': 'Lokoja', 'Kwara': 'Ilorin',
+        'Lagos': 'Ikeja', 'Nassarawa': 'Lafia', 'Niger': 'Minna', 'Ogun': 'Abeokuta',
+        'Ondo': 'Akure', 'Osun': 'Oshogbo', 'Oyo': 'Ibadan', 'Plateau': 'Jos',
+        'Rivers': 'Port Harcourt', 'Sokoto': 'Sokoto', 'Taraba': 'Jalingo',
+        'Yobe': 'Damaturu', 'Zamfara': 'Gusau'
+      };
+      var STATE_REGIONS = {
+        'Abia': 'South-East', 'Adamawa': 'North-East', 'Akwa Ibom': 'South-South', 'Anambra': 'South-East',
+        'Bauchi': 'North-East', 'Bayelsa': 'South-South', 'Benue': 'North-Central', 'Borno': 'North-East',
+        'Cross River': 'South-South', 'Delta': 'South-South', 'Ebonyi': 'South-East', 'Edo': 'South-South',
+        'Ekiti': 'South-West', 'Enugu': 'South-East', 'Federal Capital Territory': 'North-Central',
+        'Gombe': 'North-East', 'Imo': 'South-East', 'Jigawa': 'North-West', 'Kaduna': 'North-West', 'Kano': 'North-West',
+        'Katsina': 'North-West', 'Kebbi': 'North-West', 'Kogi': 'North-Central', 'Kwara': 'North-Central',
+        'Lagos': 'South-West', 'Nassarawa': 'North-Central', 'Niger': 'North-Central', 'Ogun': 'South-West',
+        'Ondo': 'South-West', 'Osun': 'South-West', 'Oyo': 'South-West', 'Plateau': 'North-Central',
+        'Rivers': 'South-South', 'Sokoto': 'North-West', 'Taraba': 'North-East',
+        'Yobe': 'North-East', 'Zamfara': 'North-West'
+      };
+      var STATE_POPULATION_OVER_10M = {
+        'Abia': false, 'Adamawa': false, 'Akwa Ibom': false, 'Anambra': false,
+        'Bauchi': false, 'Bayelsa': false, 'Benue': true, 'Borno': false,
+        'Cross River': false, 'Delta': false, 'Ebonyi': false, 'Edo': false,
+        'Ekiti': false, 'Enugu': false, 'Federal Capital Territory': false,
+        'Gombe': false, 'Imo': false, 'Jigawa': false, 'Kaduna': true, 'Kano': true,
+        'Katsina': true, 'Kebbi': false, 'Kogi': false, 'Kwara': false,
+        'Lagos': true, 'Nassarawa': false, 'Niger': false, 'Ogun': false,
+        'Ondo': false, 'Osun': false, 'Oyo': true, 'Plateau': false,
+        'Rivers': true, 'Sokoto': false, 'Taraba': false,
+        'Yobe': false, 'Zamfara': false
+      };
+      var STATE_LANGUAGES = {
+        'Abia': 'Igbo', 'Adamawa': 'Hausa, Fulfulde', 'Akwa Ibom': 'Ibibio, Efik', 'Anambra': 'Igbo',
+        'Bauchi': 'Hausa', 'Bayelsa': 'Ijaw', 'Benue': 'Tiv, Idoma', 'Borno': 'Kanuri, Hausa',
+        'Cross River': 'Efik, Ejagham', 'Delta': 'Urhobo, Itsekiri', 'Ebonyi': 'Igbo', 'Edo': 'Edo',
+        'Ekiti': 'Yoruba', 'Enugu': 'Igbo', 'Federal Capital Territory': 'Hausa, Gbagyi',
+        'Gombe': 'Hausa', 'Imo': 'Igbo', 'Jigawa': 'Hausa', 'Kaduna': 'Hausa', 'Kano': 'Hausa',
+        'Katsina': 'Hausa', 'Kebbi': 'Hausa', 'Kogi': 'Igala, Ebira', 'Kwara': 'Yoruba, Hausa',
+        'Lagos': 'Yoruba', 'Nassarawa': 'Hausa, Eggon', 'Niger': 'Hausa, Nupe', 'Ogun': 'Yoruba',
+        'Ondo': 'Yoruba', 'Osun': 'Yoruba', 'Oyo': 'Yoruba', 'Plateau': 'Berom, Hausa',
+        'Rivers': 'Ikwerre, Ijaw', 'Sokoto': 'Hausa', 'Taraba': 'Jukun, Hausa',
+        'Yobe': 'Kanuri, Hausa', 'Zamfara': 'Hausa'
+      };
+      var STATE_FOOD = {
+        'Abia': 'Abacha, Ukwa', 'Adamawa': 'Masa, Tuwo', 'Akwa Ibom': 'Edikang ikong, Afang', 'Anambra': 'Ofe onugbu, Fio fio',
+        'Bauchi': 'Tuwo, Miyan kuka', 'Bayelsa': 'Banga soup, Starch', 'Benue': 'Pounded yam, Beniseed soup', 'Borno': 'Tuwo, Dama',
+        'Cross River': 'Edikang ikong, Afang', 'Delta': 'Banga soup, Starch', 'Ebonyi': 'Okpa, Abacha', 'Edo': 'Pounded yam, Owo soup',
+        'Ekiti': 'Pounded yam, Eba', 'Enugu': 'Ofe nsala, Abacha', 'Federal Capital Territory': 'Tuwo, various',
+        'Gombe': 'Tuwo, Fura da nono', 'Imo': 'Ofe Owerri, Abacha', 'Jigawa': 'Tuwo, Dambu', 'Kaduna': 'Tuwo, Masa',
+        'Kano': 'Tuwo, Fura da nono', 'Katsina': 'Tuwo, Dambu', 'Kebbi': 'Tuwo, Masa', 'Kogi': 'Pounded yam, Eba',
+        'Kwara': 'Amala, Eba', 'Lagos': 'Eba, Amala, Jollof', 'Nassarawa': 'Tuwo, Pounded yam', 'Niger': 'Tuwo, Daddawa',
+        'Ogun': 'Amala, Eba', 'Ondo': 'Pounded yam, Eba', 'Osun': 'Amala, Iyan', 'Oyo': 'Amala, Eba',
+        'Plateau': 'Pounded yam, Tuwo', 'Rivers': 'Banga soup, Pepper soup', 'Sokoto': 'Tuwo, Fura',
+        'Taraba': 'Pounded yam, Tuwo', 'Yobe': 'Tuwo, Fura', 'Zamfara': 'Tuwo, Dambu'
+      };
+      var STATE_GOVERNOR = {
+        'Abia': 'Alex Otti', 'Adamawa': 'Ahmadu Fintiri', 'Akwa Ibom': 'Umo Eno', 'Anambra': 'Charles Soludo',
+        'Bauchi': 'Bala Mohammed', 'Bayelsa': 'Douye Diri', 'Benue': 'Hyacinth Alia', 'Borno': 'Babagana Zulum',
+        'Cross River': 'Bassey Otu', 'Delta': 'Sheriff Oborevwori', 'Ebonyi': 'Francis Nwifuru', 'Edo': 'Godwin Obaseki',
+        'Ekiti': 'Biodun Oyebamiji', 'Enugu': 'Peter Mbah', 'Federal Capital Territory': 'Nyesom Wike',
+        'Gombe': 'Inuwa Yahaya', 'Imo': 'Hope Uzodinma', 'Jigawa': 'Umar Namadi', 'Kaduna': 'Uba Sani',
+        'Kano': 'Abba Kabir Yusuf', 'Katsina': 'Dikko Radda', 'Kebbi': 'Nasir Idris', 'Kogi': 'Ahmed Ododo',
+        'Kwara': 'Abdulrahman Abdulrazaq', 'Lagos': 'Babajide Sanwo-Olu', 'Nassarawa': 'Abdullahi Sule',
+        'Niger': 'Umar Bago', 'Ogun': 'Dapo Abiodun', 'Ondo': 'Lucky Aiyedatiwa', 'Osun': 'Ademola Adeleke',
+        'Oyo': 'Seyi Makinde', 'Plateau': 'Caleb Mutfwang', 'Rivers': 'Siminalayi Fubara', 'Sokoto': 'Ahmad Aliyu',
+        'Taraba': 'Agbu Kefas', 'Yobe': 'Mai Mala Buni', 'Zamfara': 'Dauda Lawal'
+      };
+      var STATE_NAMES = Object.keys(STATE_CAPITALS);
+      var NUM_HINTS = 11;
+      var hintOrder = [];
+
+      function shuffle(arr) {
+        var a = arr.slice();
+        for (var i = a.length - 1; i > 0; i--) {
+          var j = Math.floor(Math.random() * (i + 1));
+          var t = a[i]; a[i] = a[j]; a[j] = t;
+        }
+        return a;
+      }
+
+      function getHint(state, n) {
+        var capital = STATE_CAPITALS[state] || '';
+        var region = STATE_REGIONS[state] || '';
+        var words = state.split(/\s+/).length;
+        var first = state.charAt(0);
+        var last = state.charAt(state.length - 1);
+        var capFirst = capital.charAt(0);
+        var capLast = capital.charAt(capital.length - 1);
+        var over10m = STATE_POPULATION_OVER_10M[state] !== false;
+        var languages = STATE_LANGUAGES[state] || '—';
+        var food = STATE_FOOD[state] || '—';
+        var governor = STATE_GOVERNOR[state] || '—';
+        switch (n) {
+          case 1: return 'Its population is <span class="hint-highlight">' + (over10m ? 'more' : 'less') + ' than 10 million</span>.';
+          case 2: return 'It has <span class="hint-highlight">' + words + ' word(s)</span> in its name.';
+          case 3: return 'The state\'s name starts with "<span class="hint-highlight">' + first + '</span>".';
+          case 4: return 'The state\'s name ends with "<span class="hint-highlight">' + last + '</span>".';
+          case 5: return 'Its capital has <span class="hint-highlight">' + capital.length + ' letters</span>.';
+          case 6: return 'Its capital starts with "<span class="hint-highlight">' + capFirst + '</span>".';
+          case 7: return 'The state is in <span class="hint-highlight alt">' + region + '</span>.';
+          case 8: return 'Its capital ends with "<span class="hint-highlight">' + capLast + '</span>".';
+          case 9: return 'Languages widely spoken include <span class="hint-highlight alt">' + languages + '</span>.';
+          case 10: return 'Local foods include <span class="hint-highlight alt">' + food + '</span>.';
+          case 11: return 'Current governor is <span class="hint-highlight alt">' + governor + '</span>.';
+          default: return '—';
+        }
+      }
+      var LIVES = 11;
+      var gameId = 1;
+      var targetState = null;
+      var livesLeft = LIVES;
+      var timerStart = null;
+      var timerInterval = null;
+      var wrongGuesses = [];
+
+      var heartsEl = document.getElementById('hearts');
+      var timerEl = document.getElementById('timer');
+      var startOverlay = document.getElementById('start-overlay');
+      var btnStart = document.getElementById('btn-start');
+      var mapFrame = document.getElementById('map-frame');
+      var gameOverSection = document.getElementById('game-over');
+      var gameIdEl = document.getElementById('game-id');
+      var btnResults = document.getElementById('btn-results');
+      var resultsFacts = document.getElementById('results-facts');
+      var btnPlayAgain = document.getElementById('btn-play-again');
+      var hintsGridEl = document.getElementById('hints-grid');
+
+      function renderHearts() {
+        heartsEl.innerHTML = '';
+        for (var i = 0; i < LIVES; i++) {
+          var span = document.createElement('span');
+          span.textContent = '\u2665';
+          if (i >= livesLeft) span.classList.add('lost');
+          heartsEl.appendChild(span);
+        }
+      }
+
+      function getRevealedHintCount() {
+        return Math.min(1 + wrongGuesses.length, NUM_HINTS);
+      }
+
+      function renderHints() {
+        if (!hintsGridEl || !targetState || hintOrder.length !== NUM_HINTS) return;
+        hintsGridEl.innerHTML = '';
+        var revealed = getRevealedHintCount();
+        for (var i = 1; i <= NUM_HINTS; i++) {
+          var slot = document.createElement('div');
+          slot.className = 'hint-slot' + (i <= revealed ? ' revealed' : ' locked');
+          var content = document.createElement('span');
+          content.className = 'hint-content';
+          var num = document.createElement('span');
+          num.className = 'hint-num';
+          num.textContent = i + '.';
+          content.appendChild(num);
+          var text = document.createElement('span');
+          text.className = 'hint-text';
+          if (i <= revealed) {
+            text.innerHTML = getHint(targetState, hintOrder[i - 1]);
+          }
+          content.appendChild(text);
+          slot.appendChild(content);
+          hintsGridEl.appendChild(slot);
+        }
+      }
+
+      function startTimer() {
+        timerStart = Date.now();
+        timerInterval = setInterval(function () {
+          var ms = Date.now() - timerStart;
+          var sec = Math.floor(ms / 1000);
+          var min = Math.floor(sec / 60);
+          sec = sec % 60;
+          var m = (ms % 1000);
+          timerEl.textContent = (min < 10 ? '0' : '') + min + ':' + (sec < 10 ? '0' : '') + sec + '.' + (m < 100 ? '0' : '') + (m < 10 ? '0' : '') + Math.floor(m / 10);
+        }, 10);
+      }
+
+      function stopTimer() {
+        if (timerInterval) clearInterval(timerInterval);
+        timerInterval = null;
+      }
+
+      function pickRandomState() {
+        return STATE_NAMES[Math.floor(Math.random() * STATE_NAMES.length)];
+      }
+
+      function setPathFill(stateName, fill) {
+        if (mapFrame && mapFrame.contentWindow) {
+          mapFrame.contentWindow.postMessage({ type: 'set-fill', stateName: stateName, fill: fill }, '*');
+        }
+      }
+      function resetMapColors() {
+        if (mapFrame && mapFrame.contentWindow) {
+          mapFrame.contentWindow.postMessage({ type: 'reset-map-colors' }, '*');
+        }
+      }
+
+      function showGameOver(won) {
+        stopTimer();
+        gameOverSection.classList.add('visible');
+        gameIdEl.textContent = 'Practice #' + gameId;
+        var state = targetState;
+        var capital = STATE_CAPITALS[state] || '—';
+        resultsFacts.innerHTML =
+          'Its capital is <span class="highlight">' + capital + '</span>.<br>' +
+          'The state is <span class="highlight">' + state + '</span>.<br>' +
+          (wrongGuesses.length ? 'Wrong guesses: <span class="highlight">' + wrongGuesses.join(', ') + '</span>.' : '');
+        resultsFacts.style.display = 'block';
+        if (won) setPathFill(state, '#00e676'); else setPathFill(state, '#9e4a4a');
+      }
+
+      function startGame() {
+        targetState = pickRandomState();
+        livesLeft = LIVES;
+        wrongGuesses = [];
+        var tier1 = shuffle([1, 2, 5, 7]);
+        var tier2 = shuffle([3, 4, 6, 8]);
+        var tier3 = shuffle([9, 10, 11]);
+        hintOrder = tier1.concat(tier2).concat(tier3);
+        gameOverSection.classList.remove('visible');
+        resetMapColors();
+        startOverlay.classList.add('hidden');
+        renderHearts();
+        renderHints();
+        startTimer();
+        gameId++;
+        var hintsSection = document.getElementById('hints-section');
+        if (hintsSection) hintsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        if (mapFrame && mapFrame.contentWindow) {
+          mapFrame.contentWindow.postMessage({ type: 'start-game', targetState: targetState }, '*');
+        }
+      }
+
+      function handleMapClick(stateName) {
+        if (!targetState) return;
+        if (stateName === targetState) {
+          stopTimer();
+          setPathFill(stateName, '#69f0ae');
+          showGameOver(true);
+          return;
+        }
+        wrongGuesses.push(stateName);
+        setPathFill(stateName, '#9e4a4a');
+        livesLeft--;
+        renderHearts();
+        renderHints();
+        var revealed = getRevealedHintCount();
+        var slots = hintsGridEl.querySelectorAll('.hint-slot');
+        if (slots[revealed - 1]) slots[revealed - 1].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        if (livesLeft <= 0) showGameOver(false);
+      }
+
+      mapFrame = document.querySelector('.map-outer iframe');
+      var btnMoon = document.getElementById('btn-moon');
+      var THEME_KEY = 'mapgame_theme';
+      function getTheme() {
+        return document.documentElement.classList.contains('light-mode') ? 'light' : 'dark';
+      }
+      function sendThemeToMap() {
+        if (mapFrame && mapFrame.contentWindow) {
+          mapFrame.contentWindow.postMessage({ type: 'set-theme', theme: getTheme() }, '*');
+        }
+      }
+      function applyTheme(theme) {
+        var isLight = theme === 'light';
+        document.documentElement.classList.toggle('light-mode', isLight);
+        if (btnMoon) {
+          btnMoon.textContent = isLight ? '\u2600' : '\uD83C\uDF19';
+          btnMoon.title = isLight ? 'Light mode – click for dark' : 'Dark mode – click for light';
+          btnMoon.setAttribute('aria-label', isLight ? 'Switch to dark mode' : 'Switch to light mode');
+        }
+        sendThemeToMap();
+      }
+      function toggleTheme() {
+        var next = document.documentElement.classList.contains('light-mode') ? 'dark' : 'light';
+        try { localStorage.setItem(THEME_KEY, next); } catch (e) {}
+        applyTheme(next);
+      }
+      (function initTheme() {
+        var saved = 'dark';
+        try { saved = localStorage.getItem(THEME_KEY) || 'dark'; } catch (e) {}
+        applyTheme(saved);
+      })();
+      if (btnMoon) btnMoon.addEventListener('click', toggleTheme);
+      mapFrame.addEventListener('load', sendThemeToMap);
+
+      btnStart.addEventListener('click', function () {
+        if (mapFrame && mapFrame.contentWindow) {
+          mapFrame.contentWindow.postMessage({ type: 'ignore-next-mousedown' }, '*');
+        }
+        setTimeout(function () { startGame(); }, 0);
+      });
+
+      btnPlayAgain.addEventListener('click', function () {
+        if (mapFrame && mapFrame.contentWindow) {
+          mapFrame.contentWindow.postMessage({ type: 'ignore-next-mousedown' }, '*');
+        }
+        setTimeout(function () { startGame(); }, 0);
+      });
+
+      btnResults.addEventListener('click', function () {
+        resultsFacts.style.display = resultsFacts.style.display === 'none' ? 'block' : 'none';
+      });
+
+      window.addEventListener('message', function (e) {
+        if (e.data && e.data.type === 'map-click' && e.data.state) handleMapClick(e.data.state);
+      });
+
+      document.querySelectorAll('.mode-btns a[href="mapgame.html"]').forEach(function (a) {
+        a.addEventListener('click', function () { try { localStorage.setItem('mapgame_mode', 'daily'); } catch (e) {} });
+      });
+
+      renderHearts();
+    })();
+  </script>
+</body>
+</html>
