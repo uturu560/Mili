@@ -413,6 +413,55 @@
       margin: 0 auto;
     }
     .results-facts .highlight { color: #69f0ae; }
+    .share-score-wrap {
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(255,255,255,0.15);
+    }
+    .share-score-label {
+      font-size: clamp(0.4rem, 1.8vw, 0.55rem);
+      color: #888;
+      margin-bottom: 0.5rem;
+    }
+    .share-btns {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      justify-content: center;
+      align-items: center;
+    }
+    .btn-copy-score, .btn-share-whatsapp, .btn-share-facebook, .btn-share-twitter {
+      font-family: inherit;
+      font-size: clamp(0.4rem, 1.8vw, 0.55rem);
+      padding: 0.4rem 0.65rem;
+      min-height: 36px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.25rem;
+    }
+    .btn-copy-score {
+      background: #44475a;
+      color: #f0f0f0;
+    }
+    .btn-share-whatsapp {
+      background: #25D366;
+      color: #fff;
+      font-weight: 600;
+    }
+    .btn-share-facebook {
+      background: #1877F2;
+      color: #fff;
+    }
+    .btn-share-twitter {
+      background: #1DA1F2;
+      color: #fff;
+    }
+    .btn-copy-score:hover, .btn-share-whatsapp:hover, .btn-share-facebook:hover, .btn-share-twitter:hover { filter: brightness(1.1); }
     .hints-section {
       margin-top: 0.75rem;
       max-width: min(520px, 100%);
@@ -501,6 +550,8 @@
     html.light-mode .game-over-section .game-id { color: #718096; }
     html.light-mode .results-facts { color: #4a5568; }
     html.light-mode .results-facts .highlight { color: #2f8558; }
+    html.light-mode .share-score-wrap { border-top-color: rgba(0,0,0,0.1); }
+    html.light-mode .share-score-label { color: #718096; }
     html.light-mode .hints-section h3 { color: #2f8558; }
     html.light-mode .hint-slot {
       background: rgba(255, 255, 255, 0.95);
@@ -625,6 +676,15 @@
       <button type="button" class="btn-play-again" id="btn-play-again">PLAY AGAIN</button>
     </div>
     <div class="results-facts" id="results-facts"></div>
+    <div class="share-score-wrap" id="share-score-wrap">
+      <p class="share-score-label">Share your score</p>
+      <div class="share-btns">
+        <button type="button" class="btn-copy-score" id="btn-copy-score" aria-label="Copy score to clipboard">Copy</button>
+        <a href="#" class="btn-share-whatsapp" id="btn-share-whatsapp" target="_blank" rel="noopener" aria-label="Share on WhatsApp">WhatsApp</a>
+        <a href="#" class="btn-share-facebook" id="btn-share-facebook" target="_blank" rel="noopener" aria-label="Share on Facebook">Facebook</a>
+        <a href="#" class="btn-share-twitter" id="btn-share-twitter" target="_blank" rel="noopener" aria-label="Share on Twitter">Twitter</a>
+      </div>
+    </div>
   </section>
 
   <div class="hints-section" id="hints-section">
@@ -763,6 +823,58 @@
       var gameIdEl = document.getElementById('game-id');
       var btnResults = document.getElementById('btn-results');
       var resultsFacts = document.getElementById('results-facts');
+      var lastShareResult = null;
+      var SHARE_BASE_URL = 'https://www.mili.website';
+      function getShareText() {
+        if (!lastShareResult) return 'Can you guess the state? Play Mili at ' + SHARE_BASE_URL;
+        var r = lastShareResult;
+        var timeStr = r.elapsedSec != null ? formatElapsed(r.elapsedSec) : '—';
+        var hintsUsed = 1 + (r.wrongCount || 0);
+        var lines = [
+          'Mili #' + r.gameId,
+          '\u23F1\uFE0F ' + timeStr,
+          '\uD83D\uDCA1 Hints used: ' + hintsUsed + '/10',
+          r.won ? '\uD83D\uDD25 Got it!' : '\u274C Didn\'t get it'
+        ];
+        return lines.join('\n') + '\n' + SHARE_BASE_URL;
+      }
+      function formatElapsed(sec) {
+        var m = Math.floor(sec / 60);
+        var s = sec % 60;
+        return (m ? m + ':' : '') + (s < 10 && m ? '0' : '') + s + (m ? '' : 's');
+      }
+      function copyShareText() {
+        var text = getShareText();
+        var btn = document.getElementById('btn-copy-score');
+        function done() {
+          if (btn) { btn.textContent = 'Copied!'; setTimeout(function () { if (btn) btn.textContent = 'Copy'; }, 2000); }
+        }
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(done).catch(function () { fallbackCopy(text, done); });
+        } else { fallbackCopy(text, done); }
+      }
+      function fallbackCopy(text, done) {
+        var ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        try {
+          document.execCommand('copy');
+          if (done) done();
+        } catch (e) {}
+        document.body.removeChild(ta);
+      }
+      function shareViaWhatsApp() {
+        window.open('https://wa.me/?text=' + encodeURIComponent(getShareText()), '_blank', 'noopener');
+      }
+      function shareViaFacebook() {
+        window.open('https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(SHARE_BASE_URL) + '&quote=' + encodeURIComponent(getShareText()), '_blank', 'noopener');
+      }
+      function shareViaTwitter() {
+        window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(getShareText()), '_blank', 'noopener');
+      }
       var btnPlayAgain = document.getElementById('btn-play-again');
       var hintsGridEl = document.getElementById('hints-grid');
       var mobileOverlay = document.getElementById('mobile-map-overlay');
@@ -889,6 +1001,9 @@
 
       function showGameOver(won) {
         stopTimer();
+        var elapsedMs = timerStart != null ? (Date.now() - timerStart) : 0;
+        var elapsedSec = Math.floor(elapsedMs / 1000);
+        lastShareResult = { mode: 'practice', gameId: gameId, won: won, wrongCount: wrongGuesses.length, elapsedSec: elapsedSec };
         gameOverSection.classList.add('visible');
         gameIdEl.textContent = 'Practice #' + gameId;
         var state = targetState;
@@ -930,6 +1045,18 @@
         if (stateName === targetState) {
           stopTimer();
           setPathFill(stateName, '#69f0ae');
+          var elapsedMs = timerStart != null ? (Date.now() - timerStart) : 0;
+          var elapsedSec = Math.floor(elapsedMs / 1000);
+          var capital = STATE_CAPITALS[stateName] || '—';
+          try {
+            sessionStorage.setItem('mapgame_practice_pending_share', JSON.stringify({
+              state: stateName,
+              capital: capital,
+              wrongGuesses: wrongGuesses.slice(),
+              gameId: gameId,
+              elapsedSec: elapsedSec
+            }));
+          } catch (e) {}
           window.location.href = 'https://omg10.com/4/10713611';
           return;
         }
@@ -995,6 +1122,33 @@
         resultsFacts.style.display = resultsFacts.style.display === 'none' ? 'block' : 'none';
       });
 
+      var btnCopyScore = document.getElementById('btn-copy-score');
+      var btnShareWhatsapp = document.getElementById('btn-share-whatsapp');
+      var btnShareFacebook = document.getElementById('btn-share-facebook');
+      var btnShareTwitter = document.getElementById('btn-share-twitter');
+      if (btnCopyScore) btnCopyScore.addEventListener('click', function (e) { e.preventDefault(); copyShareText(); });
+      if (btnShareWhatsapp) {
+        btnShareWhatsapp.addEventListener('click', function (e) {
+          e.preventDefault();
+          btnShareWhatsapp.href = 'https://wa.me/?text=' + encodeURIComponent(getShareText());
+          shareViaWhatsApp();
+        });
+      }
+      if (btnShareFacebook) {
+        btnShareFacebook.addEventListener('click', function (e) {
+          e.preventDefault();
+          btnShareFacebook.href = 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(SHARE_BASE_URL) + '&quote=' + encodeURIComponent(getShareText());
+          shareViaFacebook();
+        });
+      }
+      if (btnShareTwitter) {
+        btnShareTwitter.addEventListener('click', function (e) {
+          e.preventDefault();
+          btnShareTwitter.href = 'https://twitter.com/intent/tweet?text=' + encodeURIComponent(getShareText());
+          shareViaTwitter();
+        });
+      }
+
       window.addEventListener('message', function (e) {
         if (e.data && e.data.type === 'map-click' && e.data.state) handleMapClick(e.data.state);
       });
@@ -1025,7 +1179,28 @@
         a.addEventListener('click', function () { try { localStorage.setItem('mapgame_mode', 'daily'); } catch (e) {} });
       });
 
+      function restorePendingPracticeResult() {
+        try {
+          var raw = sessionStorage.getItem('mapgame_practice_pending_share');
+          if (!raw) return;
+          var p = JSON.parse(raw);
+          sessionStorage.removeItem('mapgame_practice_pending_share');
+          lastShareResult = { mode: 'practice', gameId: p.gameId, won: true, wrongCount: (p.wrongGuesses && p.wrongGuesses.length) || 0, elapsedSec: p.elapsedSec };
+          gameOverSection.classList.add('visible');
+          gameIdEl.textContent = 'Practice #' + p.gameId;
+          resultsFacts.innerHTML =
+            'Its capital is <span class="highlight">' + (p.capital || '—') + '</span>.<br>' +
+            'The state is <span class="highlight">' + (p.state || '—') + '</span>.<br>' +
+            (p.wrongGuesses && p.wrongGuesses.length ? 'Wrong guesses: <span class="highlight">' + p.wrongGuesses.join(', ') + '</span>.' : '');
+          resultsFacts.style.display = 'block';
+          startOverlay.classList.add('hidden');
+          if (mobileStartWrap) mobileStartWrap.style.display = 'none';
+          setPathFill(p.state, '#00e676');
+        } catch (e) {}
+      }
+
       renderHearts();
+      restorePendingPracticeResult();
     })();
   </script>
 </body>
