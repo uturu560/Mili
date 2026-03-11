@@ -18,9 +18,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,600;1,9..40,400&family=Press+Start+2P&display=swap" rel="stylesheet">
-  <script src="https://5gvci.com/act/files/tag.min.js?z=10706830" data-cfasync="false" async></script>
   <script>(function(s){s.dataset.zone='10705404',s.src='https://gizokraijaw.net/vignette.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
-  <script>(function(s){s.dataset.zone='10706971',s.src='https://nap5k.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
   <style>
     * { box-sizing: border-box; }
     html { font-size: clamp(14px, 2.5vw, 16px); }
@@ -613,9 +611,45 @@
       background: rgba(15, 23, 42, 0.96);
       color: #f9fafb;
     }
+    .desktop-only-msg {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: #1e1e2e;
+      color: #e0e0e0;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 1.5rem;
+      font-family: 'Press Start 2P', monospace;
+    }
+    .desktop-only-msg p {
+      margin: 0 0 1rem;
+      font-size: clamp(0.5rem, 2.5vw, 0.75rem);
+      line-height: 1.6;
+      max-width: 90%;
+    }
+    .desktop-only-msg-sub {
+      font-size: clamp(0.4rem, 2vw, 0.55rem) !important;
+      color: #90cdf4;
+      margin-bottom: 0 !important;
+    }
+    @media (max-width: 768px) {
+      .desktop-only-msg {
+        display: flex !important;
+      }
+      body > *:not(.desktop-only-msg) {
+        display: none !important;
+      }
+    }
   </style>
 </head>
 <body>
+  <div id="desktop-only-msg" class="desktop-only-msg" aria-live="polite">
+    <p>Please open this site on a laptop or desktop for the best experience.</p>
+  </div>
   <div id="mobile-map-overlay">
     <div id="mobile-map-inner"></div>
   </div>
@@ -1055,7 +1089,7 @@
         if (stateName === targetState) {
           stopTimer();
           setPathFill(stateName, '#69f0ae');
-          showGameOver(true);
+          window.location.href = 'https://omg10.com/4/10713611';
           return;
         }
         wrongGuesses.push(stateName);
