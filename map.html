@@ -226,6 +226,20 @@
       box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     }
     body.light-mode #tooltip .capital { color: #93c5fd; }
+    /* PC + tablet (481px+): message never shown */
+    @media (min-width: 481px) {
+      #desktop-only-msg,
+      .desktop-only-msg {
+        display: none !important;
+        visibility: hidden !important;
+        pointer-events: none !important;
+        position: absolute !important;
+        left: -9999px !important;
+        width: 0 !important;
+        height: 0 !important;
+        overflow: hidden !important;
+      }
+    }
     .desktop-only-msg {
       display: none;
       position: fixed;
@@ -251,9 +265,17 @@
       color: #90cdf4;
       margin-bottom: 0 !important;
     }
-    @media (max-width: 768px) {
+    /* Phone only (480px and below): show message, hide map */
+    @media (max-width: 480px) {
+      #desktop-only-msg,
       .desktop-only-msg {
         display: flex !important;
+        visibility: visible !important;
+        position: fixed !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        overflow: auto !important;
       }
       body > *:not(.desktop-only-msg) {
         display: none !important;
