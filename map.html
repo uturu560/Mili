@@ -78,6 +78,8 @@
       min-width: 1px;
       min-height: 1px;
       will-change: transform;
+      backface-visibility: hidden;
+      transform: translateZ(0);
     }
     .map-wrap object {
       display: block;
@@ -159,9 +161,11 @@
     .nigeria-map .state-label .label-capital {
       font-size: 8px;
     }
+    /* Light mode: ensure labels stay clearly visible on light map background */
     body.light-mode .nigeria-map .state-label {
       fill: #0f172a;
-      stroke: rgba(248, 250, 252, 0.9);
+      stroke: rgba(255, 255, 255, 0.95);
+      stroke-width: 2.5;
     }
     /* Map path defaults and border highlight on hover */
     .nigeria-map path {
@@ -187,18 +191,22 @@
       pointer-events: none;
       cursor: default;
     }
-    /* Possible states matching current hint (orange, gentle blink) */
+    /* Possible states matching current hint (orange, visible blink) */
     .nigeria-map path.possible-match {
-      stroke: #c2410c;
-      animation: possible-blink 1.8s ease-in-out infinite;
+      fill: #ea580c !important;
+      stroke: #c2410c !important;
+      stroke-width: 2.5 !important;
+      paint-order: stroke fill;
+      animation: possible-blink 1.5s ease-in-out infinite;
     }
     .nigeria-map path.possible-match:hover {
-      stroke: #ea580c;
-      animation: possible-blink 1.8s ease-in-out infinite;
+      stroke: #f97316 !important;
+      stroke-width: 2.8 !important;
+      animation: possible-blink 1.5s ease-in-out infinite;
     }
     @keyframes possible-blink {
-      0%, 100% { fill: #ea580c; }
-      50% { fill: #fb923c; }
+      0%, 100% { fill: #ea580c !important; }
+      50% { fill: #fb923c !important; }
     }
     .nigeria-map path.possible-match.wrong-guess,
     .nigeria-map path.wrong-guess.possible-match {
@@ -230,11 +238,16 @@
       stroke-width: 1.2;
     }
     body.light-mode .nigeria-map path.possible-match {
-      stroke: #c2410c;
-      animation: possible-blink 1.8s ease-in-out infinite;
+      fill: #ea580c !important;
+      stroke: #c2410c !important;
+      stroke-width: 2.5 !important;
+      paint-order: stroke fill;
+      animation: possible-blink 1.5s ease-in-out infinite;
     }
     body.light-mode .nigeria-map path.possible-match:hover {
-      animation: possible-blink 1.8s ease-in-out infinite;
+      stroke: #f97316 !important;
+      stroke-width: 2.8 !important;
+      animation: possible-blink 1.5s ease-in-out infinite;
     }
     body.light-mode .nigeria-map path.possible-match.wrong-guess,
     body.light-mode .nigeria-map path.wrong-guess.possible-match {
@@ -498,11 +511,16 @@
       var mapWrap = document.getElementById('map-wrap');
       var zoomContainer = document.getElementById('map-zoom-container');
 
+      var zoomRAF = null;
       function applyZoom() {
         if (!mapWrap) return;
         mapWrap.style.width = (MAP_BASE_W * zoomLevel) + 'px';
         mapWrap.style.height = (MAP_BASE_H * zoomLevel) + 'px';
-        mapWrap.style.transform = 'translate(' + panX + 'px, ' + panY + 'px)';
+        if (zoomRAF) cancelAnimationFrame(zoomRAF);
+        zoomRAF = requestAnimationFrame(function () {
+          zoomRAF = null;
+          mapWrap.style.transform = 'translate3d(' + panX + 'px, ' + panY + 'px, 0)';
+        });
       }
       var isDragging = false;
       var dragStartX = 0, dragStartY = 0, dragStartPanX = 0, dragStartPanY = 0;
@@ -650,7 +668,11 @@
         if (isDragging) {
           panX = dragStartPanX + dx;
           panY = dragStartPanY + dy;
-          mapWrap.style.transform = 'translate(' + panX + 'px, ' + panY + 'px)';
+          if (zoomRAF) cancelAnimationFrame(zoomRAF);
+          zoomRAF = requestAnimationFrame(function () {
+            zoomRAF = null;
+            mapWrap.style.transform = 'translate3d(' + panX + 'px, ' + panY + 'px, 0)';
+          });
         }
       });
       function endDrag() {
@@ -729,7 +751,11 @@
           if (isDragging) {
             panX = dragStartPanX + dx;
             panY = dragStartPanY + dy;
-            mapWrap.style.transform = 'translate(' + panX + 'px, ' + panY + 'px)';
+            if (zoomRAF) cancelAnimationFrame(zoomRAF);
+            zoomRAF = requestAnimationFrame(function () {
+              zoomRAF = null;
+              mapWrap.style.transform = 'translate3d(' + panX + 'px, ' + panY + 'px, 0)';
+            });
           }
         }
       }, { passive: false });

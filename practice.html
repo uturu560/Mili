@@ -14,7 +14,7 @@
   <link rel="icon" href="images.png" type="image/png">
   <link rel="apple-touch-icon" href="images.png">
   <meta property="og:image" content="https://www.mili.website/images.png">
-  <meta property="og:description" content="Can you beat my score? Think you know Nigeria better? Play Mili - Guess the state at mili.website">
+  <meta property="og:description" content="Can you beat my score? Think you know Nigeria better? Play Mili - Guess the state at www.mili.website">
   <title>Mili – Practice</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -23,7 +23,11 @@
   <script>(function(s){s.dataset.zone='10705404',s.src='https://gizokraijaw.net/vignette.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
   <style>
     * { box-sizing: border-box; }
-    html { font-size: clamp(16px, 3vw, 19px); scroll-behavior: smooth; }
+    html {
+      font-size: clamp(16px, 3vw, 19px);
+      scroll-behavior: smooth;
+      overflow-x: hidden;
+    }
     body {
       margin: 0;
       min-height: 100vh;
@@ -187,6 +191,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
+      min-width: 0;
     }
     #top-bar-wrap {
       width: 100%;
@@ -255,10 +260,17 @@
       overflow: hidden;
       width: 100%;
       max-width: min(85vw, 1000px);
+      min-height: 280px;
       height: clamp(320px, 65vmin, 620px);
       box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
     }
-    .map-outer iframe { border: none; width: 100%; height: 100%; display: block; }
+    .map-outer iframe {
+      border: none;
+      width: 100%;
+      height: 100%;
+      min-height: 280px;
+      display: block;
+    }
     .map-and-hints-wrap {
       display: flex;
       align-items: stretch;
@@ -272,7 +284,7 @@
       width: clamp(160px, 20vw, 220px);
       display: flex;
       flex-direction: column;
-      gap: 0.5rem;
+      gap: 0.35rem;
       font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
     }
     .hints-column .hints-column-title {
@@ -286,7 +298,7 @@
     .hints-column .hints-grid {
       display: flex;
       flex-direction: column;
-      gap: 0.5rem;
+      gap: 0.35rem;
       min-height: 0;
       overflow-y: auto;
     }
@@ -301,11 +313,24 @@
         flex-wrap: wrap;
         justify-content: center;
       }
-      .map-and-hints-wrap .rainbow-wrap { order: -1; width: 100%; max-width: 100%; }
+      .map-and-hints-wrap .rainbow-wrap {
+        order: -1;
+        width: 100%;
+        min-width: 0;
+        max-width: 100%;
+        flex: 1 1 auto;
+      }
       .hints-column { width: 50%; min-width: 160px; max-width: none; }
     }
     @media (max-width: 520px) {
       .hints-column { width: 100%; }
+    }
+    @media (max-width: 600px) {
+      #share-capture-area {
+        padding: 1rem;
+        border-radius: 16px;
+        max-width: calc(100vw - 1rem);
+      }
     }
     .map-outer .map-capture-overlay {
       position: absolute;
@@ -675,15 +700,15 @@
     .hint-slot {
       background: rgba(30, 41, 59, 0.85);
       border: 1px solid rgba(71, 85, 105, 0.5);
-      border-radius: 12px;
-      padding: 0.65rem 0.85rem;
-      font-size: clamp(0.85rem, 2.6vw, 1rem);
-      line-height: 1.45;
+      border-radius: 10px;
+      padding: 0.4rem 0.6rem;
+      font-size: clamp(0.78rem, 2.4vw, 0.9rem);
+      line-height: 1.35;
       color: #e2e8f0;
-      min-height: 3rem;
+      min-height: 2rem;
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 0.4rem;
       font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
       letter-spacing: 0.01em;
       transition: background 0.25s ease, border-color 0.25s ease, transform 0.2s ease, opacity 0.25s ease, box-shadow 0.2s ease;
@@ -699,42 +724,42 @@
       from { opacity: 0.7; transform: translateY(4px); }
       to { opacity: 1; transform: translateY(0); }
     }
-    .hint-slot.revealed .hint-text { font-size: inherit; line-height: 1.45; }
+    .hint-slot.revealed .hint-text { font-size: inherit; line-height: 1.35; }
     .hint-slot.locked {
-      min-height: 3rem;
-      padding: 0.65rem 0.85rem;
-      border-radius: 12px;
+      min-height: 2rem;
+      padding: 0.4rem 0.6rem;
+      border-radius: 10px;
       border: 1px dashed rgba(71, 85, 105, 0.6);
       background: rgba(15, 23, 42, 0.5);
     }
-    .hint-slot.locked .hint-content { display: flex; align-items: center; gap: 0.5rem; width: 100%; }
+    .hint-slot.locked .hint-content { display: flex; align-items: center; gap: 0.4rem; width: 100%; }
     .hint-slot.locked .hint-num {
       flex-shrink: 0;
-      width: 1.75rem;
-      height: 1.75rem;
-      border-radius: 8px;
+      width: 1.45rem;
+      height: 1.45rem;
+      border-radius: 6px;
       background: rgba(71, 85, 105, 0.6);
       color: #64748b;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 0.7rem;
+      font-size: 0.65rem;
       font-weight: 600;
     }
     .hint-slot.locked .hint-text {
       color: #64748b;
-      font-size: 0.85rem;
+      font-size: 0.78rem;
       font-style: italic;
     }
     .hint-slot .hint-num {
       flex-shrink: 0;
-      min-width: 1.75rem;
-      height: 1.75rem;
-      border-radius: 8px;
+      min-width: 1.45rem;
+      height: 1.45rem;
+      border-radius: 6px;
       background: rgba(45, 212, 191, 0.2);
       color: #2dd4bf;
       font-weight: 600;
-      font-size: clamp(0.7rem, 2.2vw, 0.85rem);
+      font-size: clamp(0.65rem, 2vw, 0.78rem);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -1045,34 +1070,44 @@
 
       function getStatesMatchingHint(state, hintNum) {
         if (!state || hintNum < 1 || hintNum > 10) return [];
+        var list = [];
+        var hintText = STATE_HINTS[state] && STATE_HINTS[state][hintNum - 1];
+        if (hintText) {
+          if (hintNum === 1) {
+            var bucket = (hintText.indexOf('under') !== -1) ? 'under' : (hintText.indexOf('over') !== -1) ? 'over' : 'around';
+            for (var i = 0; i < STATE_NAMES.length; i++) {
+              var s = STATE_NAMES[i];
+              var t = STATE_HINTS[s] && STATE_HINTS[s][0];
+              if (t) {
+                var b = (t.indexOf('under') !== -1) ? 'under' : (t.indexOf('over') !== -1) ? 'over' : 'around';
+                if (b === bucket) list.push(s);
+              }
+            }
+          } else {
+            for (var j = 0; j < STATE_NAMES.length; j++) {
+              var s2 = STATE_NAMES[j];
+              var otherText = STATE_HINTS[s2] && STATE_HINTS[s2][hintNum - 1];
+              if (otherText === hintText) list.push(s2);
+            }
+          }
+          if (list.length > 0) return list;
+        }
         var capital = STATE_CAPITALS[state] || '';
         var region = STATE_REGIONS[state] || '';
-        var words = state.split(/\s+/).length;
-        var first = state.charAt(0);
-        var last = state.charAt(state.length - 1);
-        var capFirst = capital.charAt(0);
-        var capLast = capital.charAt(capital.length - 1);
-        var over10m = STATE_POPULATION_OVER_10M[state] !== false;
         var nameLen = state.replace(/\s/g, '').length;
-        var list = [];
-        for (var i = 0; i < STATE_NAMES.length; i++) {
-          var s = STATE_NAMES[i];
-          var cap = STATE_CAPITALS[s] || '';
+        var over10m = STATE_POPULATION_OVER_10M[state] !== false;
+        for (var k = 0; k < STATE_NAMES.length; k++) {
+          var s3 = STATE_NAMES[k];
+          var cap = STATE_CAPITALS[s3] || '';
           var match = false;
           switch (hintNum) {
-            case 1: match = (STATE_POPULATION_OVER_10M[s] !== false) === over10m; break;
-            case 2: match = s.split(/\s+/).length === words; break;
-            case 3: match = s.charAt(0) === first; break;
-            case 4: match = s.charAt(s.length - 1) === last; break;
-            case 5: match = cap.length === capital.length; break;
-            case 6: match = cap.charAt(0) === capFirst; break;
-            case 7: match = (STATE_REGIONS[s] || '') === region; break;
-            case 8: match = cap.charAt(cap.length - 1) === capLast; break;
-            case 9: match = s.replace(/\s/g, '').length === nameLen; break;
+            case 1: match = (STATE_POPULATION_OVER_10M[s3] !== false) === over10m; break;
+            case 7: match = (STATE_REGIONS[s3] || '') === region; break;
+            case 9: match = s3.replace(/\s/g, '').length === nameLen; break;
             case 10: match = cap === capital; break;
             default: break;
           }
-          if (match) list.push(s);
+          if (match) list.push(s3);
         }
         return list;
       }
@@ -1090,14 +1125,20 @@
           return;
         }
         var stateNames = getStatesMatchingHint(targetState, hintIndex);
-        if (stateNames.length < 6) {
+        if (stateNames.length < 1) {
           mapFrame.contentWindow.postMessage({ type: 'clear-highlight' }, '*');
           return;
         }
         var others = stateNames.filter(function (s) { return s !== targetState; });
-        var picked = [targetState];
         others = shuffle(others);
+        var picked = [targetState];
         for (var i = 0; i < 5 && i < others.length; i++) picked.push(others[i]);
+        while (picked.length < 6) {
+          var rest = STATE_NAMES.filter(function (s) { return picked.indexOf(s) === -1; });
+          if (rest.length === 0) break;
+          rest = shuffle(rest);
+          picked.push(rest[0]);
+        }
         mapFrame.contentWindow.postMessage({ type: 'highlight-possible-states', stateNames: picked }, '*');
       }
       var LIVES = 10;
@@ -1504,6 +1545,7 @@
         if (mapFrame && mapFrame.contentWindow) {
           mapFrame.contentWindow.postMessage({ type: 'start-game', targetState: targetState }, '*');
         }
+        setTimeout(function () { updateMapHintHighlight(); }, 80);
       }
 
       function handleMapClick(stateName) {
@@ -1579,7 +1621,10 @@
         applyTheme(saved);
       })();
       if (btnMoon) btnMoon.addEventListener('click', toggleTheme);
-      mapFrame.addEventListener('load', sendThemeToMap);
+      mapFrame.addEventListener('load', function () {
+        sendThemeToMap();
+        updateMapHintHighlight();
+      });
 
       btnStart.addEventListener('click', function () {
         if (mapFrame && mapFrame.contentWindow) {
