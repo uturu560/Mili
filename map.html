@@ -121,17 +121,18 @@
       position: fixed;
       left: 0;
       top: 0;
-      padding: 0.5rem 0.75rem;
-      background: #1a365d;
-      color: #fff;
-      border-radius: 8px;
+      padding: 0.55rem 0.85rem;
+      background: #1e293b;
+      color: #f1f5f9;
+      border-radius: 10px;
       font-size: 0.9rem;
-      line-height: 1.4;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      line-height: 1.45;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+      border: 1px solid rgba(71, 85, 105, 0.5);
       pointer-events: none;
       opacity: 0;
       visibility: hidden;
-      transition: opacity 0.15s ease, visibility 0.15s ease, transform 0.1s ease;
+      transition: opacity 0.2s ease, visibility 0.2s ease;
       z-index: 1000;
       max-width: 220px;
     }
@@ -140,7 +141,7 @@
       visibility: visible;
     }
     #tooltip .state-name { font-weight: 700; font-size: 1.2rem; line-height: 1.3; display: block; }
-    #tooltip .capital { color: #90cdf4; font-size: 0.8rem; display: block; margin-top: 0.2rem; }
+    #tooltip .capital { color: #2dd4bf; font-size: 0.8rem; display: block; margin-top: 0.25rem; }
     /* Always-visible state + capital labels inside the SVG */
     .nigeria-map .state-label {
       fill: #e5e7eb;
@@ -164,16 +165,16 @@
     }
     /* Map path defaults and border highlight on hover */
     .nigeria-map path {
-      fill: #2d3748;
-      stroke: #1a202c;
+      fill: #334155;
+      stroke: #1e293b;
       stroke-width: 1.2;
-      transition: fill 0.15s ease, stroke 0.15s ease, stroke-width 0.15s ease;
+      transition: fill 0.2s ease, stroke 0.2s ease, stroke-width 0.2s ease;
       cursor: pointer;
     }
     .nigeria-map path:hover {
-      fill: #00e676;
-      stroke: #00c853;
-      stroke-width: 2.5;
+      fill: #2dd4bf;
+      stroke: #14b8a6;
+      stroke-width: 2.2;
     }
     /* Wrong guess: stay red and ignore hover */
     .nigeria-map path.wrong-guess,
@@ -185,6 +186,25 @@
     .nigeria-map path.guessed {
       pointer-events: none;
       cursor: default;
+    }
+    /* Possible states matching current hint (orange, gentle blink) */
+    .nigeria-map path.possible-match {
+      stroke: #c2410c;
+      animation: possible-blink 1.8s ease-in-out infinite;
+    }
+    .nigeria-map path.possible-match:hover {
+      stroke: #ea580c;
+      animation: possible-blink 1.8s ease-in-out infinite;
+    }
+    @keyframes possible-blink {
+      0%, 100% { fill: #ea580c; }
+      50% { fill: #fb923c; }
+    }
+    .nigeria-map path.possible-match.wrong-guess,
+    .nigeria-map path.wrong-guess.possible-match {
+      fill: #9e4a4a !important;
+      stroke: #b85454;
+      animation: none;
     }
     /* Light mode (when embedded and parent sends set-theme) */
     body.light-mode {
@@ -199,15 +219,26 @@
       stroke-width: 1.2;
     }
     body.light-mode .nigeria-map path:hover {
-      fill: #00e676;
-      stroke: #00c853;
-      stroke-width: 2.5;
+      fill: #2dd4bf;
+      stroke: #14b8a6;
+      stroke-width: 2.2;
     }
     body.light-mode .nigeria-map path.wrong-guess,
     body.light-mode .nigeria-map path.wrong-guess:hover {
       fill: #b91c1c !important;
       stroke: #dc2626;
       stroke-width: 1.2;
+    }
+    body.light-mode .nigeria-map path.possible-match {
+      stroke: #c2410c;
+      animation: possible-blink 1.8s ease-in-out infinite;
+    }
+    body.light-mode .nigeria-map path.possible-match:hover {
+      animation: possible-blink 1.8s ease-in-out infinite;
+    }
+    body.light-mode .nigeria-map path.possible-match.wrong-guess,
+    body.light-mode .nigeria-map path.wrong-guess.possible-match {
+      animation: none;
     }
     body.light-mode .map-zoom-controls button {
       background: #cbd5e1;
@@ -282,6 +313,7 @@
       }
     }
   </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" crossorigin="anonymous"></script>
 </head>
 <body>
   <div id="desktop-only-msg" class="desktop-only-msg" aria-live="polite">
@@ -499,7 +531,7 @@
             restTimeout = setTimeout(enableDragAfterRest, REST_MS);
           }
           if (e.data && e.data.type === 'start-game' && e.data.targetState) {
-            animateToRandomWrongPlace(e.data.targetState);
+            /* Map stays centered; no animation */
           }
           if (e.data && e.data.type === 'set-theme' && e.data.theme) {
             document.body.classList.toggle('light-mode', e.data.theme === 'light');
@@ -526,7 +558,56 @@
                 paths[i].removeAttribute('fill');
                 paths[i].classList.remove('wrong-guess');
                 paths[i].classList.remove('guessed');
+                paths[i].classList.remove('possible-match');
               }
+            }
+          }
+          if (e.data && e.data.type === 'highlight-possible-states' && Array.isArray(e.data.stateNames)) {
+            var svg = document.getElementById('nigeria-map');
+            if (svg) {
+              var paths = svg.querySelectorAll('path[title]');
+              var set = {};
+              for (var s = 0; s < e.data.stateNames.length; s++) set[e.data.stateNames[s]] = true;
+              for (var i = 0; i < paths.length; i++) {
+                var path = paths[i];
+                var name = path.getAttribute('title');
+                if (set[name] && !path.classList.contains('guessed') && !path.classList.contains('wrong-guess')) {
+                  path.classList.add('possible-match');
+                } else {
+                  path.classList.remove('possible-match');
+                }
+              }
+            }
+          }
+          if (e.data && e.data.type === 'clear-highlight') {
+            var svg = document.getElementById('nigeria-map');
+            if (svg) {
+              var paths = svg.querySelectorAll('path.possible-match');
+              for (var i = 0; i < paths.length; i++) paths[i].classList.remove('possible-match');
+            }
+          }
+          if (e.data && e.data.type === 'getMapImage') {
+            var container = document.getElementById('map-zoom-container');
+            if (container && typeof html2canvas !== 'undefined') {
+              html2canvas(container, {
+                useCORS: true,
+                allowTaint: true,
+                scale: Math.min(2, window.devicePixelRatio || 1),
+                backgroundColor: document.body.classList.contains('light-mode') ? '#e2e8f0' : '#1e1e2e',
+                logging: false
+              }).then(function (canvas) {
+                try {
+                  window.parent.postMessage({ type: 'mapImage', dataUrl: canvas.toDataURL('image/png') }, '*');
+                } catch (err) {}
+              }).catch(function () {
+                try {
+                  window.parent.postMessage({ type: 'mapImage', dataUrl: null }, '*');
+                } catch (err) {}
+              });
+            } else {
+              try {
+                window.parent.postMessage({ type: 'mapImage', dataUrl: null }, '*');
+              } catch (err) {}
             }
           }
         });

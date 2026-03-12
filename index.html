@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Google tag (gtag.js) -->
+  <!-- Google Analytics (gtag) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-E41G51NSJB"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -18,11 +18,12 @@
   <title>Mili – Guess the state</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,600;1,9..40,400&family=Press+Start+2P&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- ADS: vignette banner -->
   <script>(function(s){s.dataset.zone='10705404',s.src='https://gizokraijaw.net/vignette.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
   <style>
     * { box-sizing: border-box; }
-    html { font-size: clamp(14px, 2.5vw, 16px); }
+    html { font-size: clamp(16px, 3vw, 19px); scroll-behavior: smooth; }
     body {
       margin: 0;
       min-height: 100vh;
@@ -30,38 +31,43 @@
       width: 100%;
       max-width: 100vw;
       overflow-x: hidden;
-      background: #1e1e2e;
-      color: #e0e0e0;
-      font-family: 'Press Start 2P', monospace;
+      background: #16161e;
+      background-image: radial-gradient(ellipse 120% 80% at 50% -20%, rgba(45, 212, 191, 0.08), transparent), radial-gradient(ellipse 80% 50% at 80% 50%, rgba(99, 102, 241, 0.06), transparent);
+      color: #e2e8f0;
+      font-family: 'Outfit', 'DM Sans', system-ui, -apple-system, sans-serif;
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 0.5rem 0.75rem 1.5rem;
-      padding-left: max(0.75rem, env(safe-area-inset-left));
-      padding-right: max(0.75rem, env(safe-area-inset-right));
+      padding: 0.75rem 1rem 1.5rem;
+      padding-left: max(1rem, env(safe-area-inset-left));
+      padding-right: max(1rem, env(safe-area-inset-right));
       padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
     }
     .header {
       text-align: center;
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.75rem;
       width: 100%;
       max-width: 100%;
       padding: 0 0.25rem;
     }
     .game-name {
-      font-size: clamp(1rem, 5vw, 1.4rem);
-      letter-spacing: 0.1em;
-      color: #fff;
-      margin: 0 0 0.25rem;
+      font-size: clamp(1.35rem, 6vw, 1.9rem);
+      letter-spacing: 0.02em;
+      color: #f8fafc;
+      margin: 0 0 0.2rem;
       word-break: keep-all;
+      font-weight: 700;
+      font-family: 'Outfit', system-ui, sans-serif;
     }
-    html.light-mode .game-name { color: #1a202c; }
+    html.light-mode .game-name { color: #0f172a; }
     .subtitle {
-      color: #ff9f43;
-      font-size: clamp(0.5rem, 2.5vw, 0.75rem);
-      margin-bottom: 0.75rem;
+      color: #38bdf8;
+      font-size: clamp(0.7rem, 3vw, 0.95rem);
+      margin-bottom: 0.5rem;
       padding: 0 0.25rem;
       word-break: break-word;
+      font-weight: 500;
+      letter-spacing: 0.02em;
     }
     .mode-btns {
       display: flex;
@@ -82,21 +88,28 @@
     }
     .mode-btns button {
       font-family: inherit;
-      font-size: clamp(0.4rem, 2vw, 0.6rem);
-      padding: 0.45rem 0.6rem;
+      font-size: clamp(0.5rem, 2.5vw, 0.75rem);
+      padding: 0.5rem 0.75rem;
       background: transparent;
-      color: #69f0ae;
-      border: 2px solid #69f0ae;
-      border-radius: 4px;
+      color: #2dd4bf;
+      border: 1.5px solid rgba(45, 212, 191, 0.5);
+      border-radius: 10px;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: background 0.2s ease, border-color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
     }
     .mode-btns button:hover {
-      background: rgba(105, 240, 174, 0.15);
+      background: rgba(45, 212, 191, 0.12);
+      border-color: #2dd4bf;
     }
+    .mode-btns button:focus-visible { outline: 2px solid #2dd4bf; outline-offset: 2px; }
     .mode-btns button.active {
-      background: #69f0ae;
-      color: #1e1e2e;
+      background: linear-gradient(135deg, #2dd4bf, #14b8a6);
+      color: #0f172a;
+      font-weight: 600;
+      font-size: clamp(0.55rem, 2.7vw, 0.85rem);
+      padding: 0.55rem 0.85rem;
+      border-color: transparent;
+      box-shadow: 0 2px 8px rgba(45, 212, 191, 0.35);
     }
     .mode-btns button:disabled {
       opacity: 0.5;
@@ -112,30 +125,44 @@
       border-color: #9ca3af;
     }
     .mode-btns button[data-mode="daily"] {
-      font-weight: 700;
-      font-size: clamp(0.45rem, 2.2vw, 0.7rem);
-      padding: 0.5rem 0.75rem;
+      font-weight: 600;
+      font-size: clamp(0.55rem, 2.7vw, 0.85rem);
+      padding: 0.55rem 0.85rem;
     }
     .mode-btns .mode-btns-link {
       font-family: inherit;
-      font-size: clamp(0.4rem, 2vw, 0.6rem);
-      padding: 0.45rem 0.6rem;
-      color: #69f0ae;
-      border: 2px solid #69f0ae;
-      border-radius: 4px;
+      font-size: clamp(0.5rem, 2.5vw, 0.75rem);
+      padding: 0.5rem 0.75rem;
+      color: #2dd4bf;
+      border: 1.5px solid rgba(45, 212, 191, 0.5);
+      border-radius: 10px;
       text-decoration: none;
-      transition: all 0.2s;
+      transition: background 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
       box-sizing: border-box;
     }
     .mode-btns .mode-btns-link:hover {
-      background: rgba(105, 240, 174, 0.15);
+      background: rgba(45, 212, 191, 0.12);
+      border-color: #2dd4bf;
     }
+    .mode-btns .mode-btns-link:focus-visible { outline: 2px solid #2dd4bf; outline-offset: 2px; }
     html.light-mode .mode-btns .mode-btns-link {
-      color: #2f8558;
-      border-color: #2f8558;
+      color: #0d9488;
+      border-color: rgba(13, 148, 136, 0.5);
     }
     html.light-mode .mode-btns .mode-btns-link:hover {
-      background: rgba(45, 133, 88, 0.12);
+      background: rgba(13, 148, 136, 0.1);
+    }
+    html.light-mode .mode-btns button {
+      color: #0d9488;
+      border-color: rgba(13, 148, 136, 0.5);
+    }
+    html.light-mode .mode-btns button:hover {
+      background: rgba(13, 148, 136, 0.1);
+    }
+    html.light-mode .mode-btns button.active {
+      background: linear-gradient(135deg, #0d9488, #0f766e);
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(13, 148, 136, 0.3);
     }
     .mode-btns .btn-moon {
       padding: 0.55rem 0.75rem;
@@ -144,62 +171,157 @@
       line-height: 1;
       min-width: 2.5rem;
     }
+    /* Centered main content – single card in the middle */
+    #share-capture-area {
+      width: 100%;
+      max-width: min(calc(100vw - 2rem), 1520px);
+      margin: 0 auto;
+      padding: 1.75rem 2rem;
+      border-radius: 24px;
+      background: rgba(22, 25, 35, 0.92);
+      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.04);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    #top-bar-wrap {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .header { max-width: 100%; }
     .game-hud {
       display: flex;
       justify-content: space-between;
       align-items: center;
       width: 100%;
-      max-width: min(760px, 100%);
-      margin-bottom: 0.5rem;
-      padding: 0 0.5rem;
-      font-size: 0.5rem;
+      margin-bottom: 0.75rem;
+      padding: 0.6rem 0.9rem;
+      font-size: 0.6rem;
+      background: rgba(30, 41, 59, 0.6);
+      border-radius: 12px;
+      border: 1px solid rgba(71, 85, 105, 0.35);
     }
     .hearts {
       display: flex;
       flex-wrap: wrap;
-      gap: 2px;
-      font-size: clamp(0.65rem, 2.8vw, 1.1rem);
+      gap: 3px;
+      font-size: clamp(0.9rem, 3.2vw, 1.4rem);
       max-width: 100%;
     }
     .hearts span {
-      color: #e74c3c;
+      color: #f87171;
       font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif;
+      transition: transform 0.2s ease, opacity 0.25s ease;
     }
     .hearts span.lost {
-      color: #444;
-      opacity: 0.6;
+      color: #475569;
+      opacity: 0.5;
+      transform: scale(0.92);
+    }
+    .timer-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .timer-label {
+      font-size: clamp(0.6rem, 2.2vw, 0.75rem);
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-weight: 500;
     }
     .timer {
-      color: #fff;
-      letter-spacing: 0.05em;
-      font-size: clamp(1rem, 4vw, 1.5rem);
+      color: #f8fafc;
+      letter-spacing: 0.04em;
+      font-size: clamp(1.15rem, 4.5vw, 1.65rem);
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
     }
     .rainbow-wrap {
-      padding: 6px;
+      padding: 10px;
       width: 100%;
-      max-width: min(760px, 100%);
-      background: linear-gradient(90deg, #e74c3c, #f39c12, #f1c40f, #27ae60, #3498db, #9b59b6, #e74c3c);
-      background-size: 400% 100%;
-      border-radius: 12px;
-      animation: rainbow-border 8s linear infinite;
-    }
-    @keyframes rainbow-border {
-      0% { background-position: 0% 50%; }
-      100% { background-position: 400% 50%; }
+      max-width: min(85vw, 1000px);
+      background: linear-gradient(145deg, rgba(45, 212, 191, 0.12), rgba(99, 102, 241, 0.08));
+      border-radius: 18px;
+      border: 1px solid rgba(45, 212, 191, 0.2);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
     }
     .map-outer {
-      background: #282a36;
-      border-radius: 6px;
+      background: #1e293b;
+      border-radius: 10px;
       position: relative;
       overflow: hidden;
       width: 100%;
-      max-width: 744px;
-      height: clamp(220px, 50vmin, 420px);
+      max-width: min(85vw, 1000px);
+      height: clamp(320px, 65vmin, 620px);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
     }
     .map-outer iframe {
       border: none;
       width: 100%;
       height: 100%;
+      display: block;
+    }
+    .map-and-hints-wrap {
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+      gap: 1.25rem;
+      width: 100%;
+      margin: 0 auto;
+    }
+    .hints-column {
+      flex-shrink: 0;
+      width: clamp(160px, 20vw, 220px);
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
+    }
+    .hints-column .hints-column-title {
+      font-size: clamp(0.6rem, 2.2vw, 0.75rem);
+      color: #94a3b8;
+      margin: 0;
+      font-family: 'Outfit', system-ui, sans-serif;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+    }
+    .hints-column .hints-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      min-height: 0;
+      overflow-y: auto;
+    }
+    .map-and-hints-wrap .rainbow-wrap {
+      flex: 0 0 auto;
+      width: min(72vw, 780px);
+      min-width: min(72vw, 780px);
+      max-width: min(72vw, 780px);
+    }
+    @media (max-width: 900px) {
+      .map-and-hints-wrap {
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      .map-and-hints-wrap .rainbow-wrap { order: -1; width: 100%; max-width: 100%; }
+      .hints-column { width: 50%; min-width: 160px; max-width: none; }
+    }
+    @media (max-width: 520px) {
+      .hints-column { width: 100%; }
+    }
+    .map-outer .map-capture-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+    }
+    .map-outer .map-capture-overlay img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
       display: block;
     }
     /* Mobile fullscreen map overlay + floating hints */
@@ -248,31 +370,34 @@
     }
     #mobile-hints-content {
       max-width: 92%;
-      background: rgba(0, 0, 0, 0.9);
-      color: #f9fafb;
-      padding: 0.5rem 1rem;
-      border-radius: 999px;
-      font-size: 0.75rem;
-      line-height: 1.4;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+      background: rgba(15, 23, 42, 0.95);
+      color: #f1f5f9;
+      padding: 0.6rem 1.1rem;
+      border-radius: 14px;
+      font-size: 0.9rem;
+      line-height: 1.45;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
       font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
+      border: 1px solid rgba(71, 85, 105, 0.4);
     }
     #mobile-hints-minimize {
       flex-shrink: 0;
-      width: 28px;
-      height: 28px;
+      width: 32px;
+      height: 32px;
       border: none;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.2);
-      color: #f9fafb;
-      font-size: 0.9rem;
+      border-radius: 10px;
+      background: rgba(71, 85, 105, 0.5);
+      color: #f1f5f9;
+      font-size: 1rem;
       line-height: 1;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
       padding: 0;
+      transition: background 0.2s ease;
     }
+    #mobile-hints-minimize:hover { background: rgba(100, 116, 139, 0.6); }
     #mobile-hints-icon {
       display: none;
       pointer-events: auto;
@@ -319,10 +444,11 @@
         left: auto;
         width: auto;
         max-width: none;
-        padding: 0.35rem 0.65rem;
-        border-radius: 999px;
-        background: #1e1e2e;
-        box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+        padding: 0.4rem 0.75rem;
+        border-radius: 14px;
+        background: rgba(22, 22, 30, 0.95);
+        border: 1px solid rgba(71, 85, 105, 0.4);
+        box-shadow: 0 8px 24px rgba(0,0,0,0.35);
         cursor: pointer;
       }
       #top-bar-wrap.minimized .header {
@@ -363,12 +489,12 @@
         display: none;
       }
       html.light-mode #top-bar-wrap.minimized {
-        background: #f5f5f5;
-        box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+        background: rgba(248, 250, 252, 0.95);
+        box-shadow: 0 8px 24px rgba(0,0,0,0.15);
       }
       html.light-mode #top-bar-wrap:not(.minimized) .header,
       html.light-mode #top-bar-wrap:not(.minimized) .game-hud {
-        background: #f5f5f5;
+        background: #f8fafc;
       }
       #mobile-hints-bar {
         top: 52px;
@@ -390,56 +516,72 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      background: rgba(30, 30, 46, 0.45);
+      background: rgba(15, 23, 42, 0.7);
+      backdrop-filter: blur(4px);
       z-index: 10;
+      transition: opacity 0.3s ease;
     }
     .start-overlay.hidden { display: none; }
     .daily-played-msg {
       text-align: center;
-      color: #90cdf4;
-      font-size: clamp(0.4rem, 2vw, 0.55rem);
+      color: #94a3b8;
+      font-size: clamp(0.5rem, 2.2vw, 0.65rem);
       line-height: 1.6;
       padding: 0.5rem 0.75rem;
       max-width: 100%;
       word-wrap: break-word;
     }
-    .daily-played-msg strong { color: #fff; }
+    .daily-played-msg strong { color: #f8fafc; }
     .btn-start {
-      font-family: inherit;
-      background: #69f0ae;
-      color: #1e1e2e;
+      font-family: 'Outfit', system-ui, sans-serif;
+      font-weight: 600;
+      font-size: clamp(0.75rem, 3vw, 1rem);
+      padding: clamp(0.75rem, 2.5vw, 1.1rem) clamp(1.5rem, 5vw, 2.5rem);
+      background: linear-gradient(135deg, #2dd4bf, #14b8a6);
+      color: #0f172a;
       border: none;
-      border-radius: 12px;
+      border-radius: 14px;
       cursor: pointer;
-      box-shadow: 0 4px 0 #4ade80, 0 6px 12px rgba(0,0,0,0.3);
-      transition: transform 0.1s, box-shadow 0.1s;
+      box-shadow: 0 4px 14px rgba(45, 212, 191, 0.4);
+      transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
     }
     .btn-start:hover {
-      transform: translateY(1px);
-      box-shadow: 0 3px 0 #4ade80, 0 4px 8px rgba(0,0,0,0.3);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(45, 212, 191, 0.45);
     }
     .btn-start:active {
-      transform: translateY(3px);
-      box-shadow: 0 1px 0 #4ade80, 0 2px 4px rgba(0,0,0,0.3);
+      transform: translateY(0);
+      box-shadow: 0 2px 10px rgba(45, 212, 191, 0.35);
     }
+    .btn-start:focus-visible { outline: 2px solid #2dd4bf; outline-offset: 3px; }
     .game-over-section {
       display: none;
       text-align: center;
-      margin-top: 1rem;
-      max-width: min(760px, 100%);
+      margin-top: 1.25rem;
       width: 100%;
-      padding: 0 0.5rem;
+      max-width: 100%;
+      padding: 1rem 0.75rem;
+      background: rgba(30, 41, 59, 0.6);
+      border-radius: 16px;
+      border: 1px solid rgba(71, 85, 105, 0.4);
+      animation: gameOverIn 0.4s ease-out;
+    }
+    @keyframes gameOverIn {
+      from { opacity: 0; transform: translateY(-8px); }
+      to { opacity: 1; transform: translateY(0); }
     }
     .game-over-section.visible { display: block; }
     .game-over-section .game-over-text {
-      font-size: clamp(0.5rem, 2.2vw, 0.85rem);
-      color: #fff;
-      margin-bottom: 0.5rem;
+      font-size: clamp(0.7rem, 2.8vw, 1.05rem);
+      color: #f8fafc;
+      margin-bottom: 0.4rem;
+      font-weight: 600;
     }
     .game-over-section .game-id {
-      font-size: clamp(0.4rem, 1.8vw, 0.55rem);
-      color: #888;
-      margin-bottom: 0.75rem;
+      font-size: clamp(0.55rem, 2.2vw, 0.7rem);
+      color: #94a3b8;
+      margin-bottom: 0.85rem;
+      font-weight: 500;
     }
     .game-over-btns {
       display: flex;
@@ -449,35 +591,43 @@
       margin-bottom: 1rem;
     }
     .btn-results, .btn-play-again {
-      font-family: inherit;
-      font-size: clamp(0.45rem, 2vw, 0.65rem);
-      padding: clamp(0.5rem, 2vw, 0.85rem) clamp(0.75rem, 3vw, 1.75rem);
+      font-family: 'Outfit', system-ui, sans-serif;
+      font-size: clamp(0.6rem, 2.4vw, 0.8rem);
+      font-weight: 600;
+      padding: clamp(0.55rem, 2vw, 0.9rem) clamp(1rem, 3vw, 1.75rem);
       min-height: 44px;
-      background: #69f0ae;
-      color: #1e1e2e;
+      background: linear-gradient(135deg, #2dd4bf, #14b8a6);
+      color: #0f172a;
       border: none;
-      border-radius: 8px;
+      border-radius: 12px;
       cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
-    .btn-results:hover, .btn-play-again:hover { filter: brightness(1.1); }
+    .btn-results:hover, .btn-play-again:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(45, 212, 191, 0.35);
+    }
+    .btn-results:focus-visible, .btn-play-again:focus-visible { outline: 2px solid #2dd4bf; outline-offset: 2px; }
     .results-facts {
       text-align: left;
-      font-size: clamp(0.45rem, 2vw, 0.7rem);
-      line-height: 1.8;
-      color: #b0b0b0;
+      font-size: clamp(0.6rem, 2.4vw, 0.9rem);
+      line-height: 1.85;
+      color: #cbd5e1;
       max-width: 100%;
       margin: 0 auto;
+      padding: 0.5rem 0;
     }
-    .results-facts .highlight { color: #69f0ae; }
+    .results-facts .highlight { color: #2dd4bf; font-weight: 600; }
     .share-score-wrap {
       margin-top: 1rem;
       padding-top: 1rem;
-      border-top: 1px solid rgba(255,255,255,0.15);
+      border-top: 1px solid rgba(148, 163, 184, 0.2);
     }
     .share-score-label {
-      font-size: clamp(0.4rem, 1.8vw, 0.55rem);
-      color: #888;
+      font-size: clamp(0.55rem, 2.2vw, 0.7rem);
+      color: #94a3b8;
       margin-bottom: 0.5rem;
+      font-weight: 500;
     }
     .share-btns {
       display: flex;
@@ -488,17 +638,18 @@
     }
     .btn-copy-score, .btn-share-whatsapp, .btn-share-facebook, .btn-share-twitter {
       font-family: inherit;
-      font-size: clamp(0.4rem, 1.8vw, 0.55rem);
-      padding: 0.4rem 0.65rem;
-      min-height: 36px;
+      font-size: clamp(0.5rem, 2.2vw, 0.68rem);
+      padding: 0.45rem 0.75rem;
+      min-height: 38px;
       border: none;
-      border-radius: 6px;
+      border-radius: 10px;
       cursor: pointer;
       text-decoration: none;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 0.35rem;
+      gap: 0.4rem;
+      transition: transform 0.15s ease, filter 0.15s ease;
     }
     .share-btns .share-icon {
       width: 1.1em;
@@ -506,172 +657,170 @@
       flex-shrink: 0;
     }
     .btn-copy-score {
-      background: #44475a;
-      color: #f0f0f0;
+      background: #334155;
+      color: #e2e8f0;
     }
     .btn-share-screenshot {
-      background: #69f0ae;
-      color: #1e1e2e;
+      background: linear-gradient(135deg, #2dd4bf, #14b8a6);
+      color: #0f172a;
       font-weight: 600;
     }
-    .btn-share-whatsapp {
-      background: #25D366;
-      color: #fff;
-      font-weight: 600;
+    .btn-share-whatsapp { background: #25D366; color: #fff; font-weight: 600; }
+    .btn-share-facebook { background: #1877F2; color: #fff; font-weight: 600; }
+    .btn-share-twitter { background: #1DA1F2; color: #fff; font-weight: 600; }
+    .btn-copy-score:hover, .btn-share-screenshot:hover, .btn-share-whatsapp:hover, .btn-share-facebook:hover, .btn-share-twitter:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.08);
     }
-    .btn-share-facebook {
-      background: #1877F2;
-      color: #fff;
-    }
-    .btn-share-twitter {
-      background: #1DA1F2;
-      color: #fff;
-    }
-    .btn-copy-score:hover, .btn-share-screenshot:hover, .btn-share-whatsapp:hover, .btn-share-facebook:hover, .btn-share-twitter:hover { filter: brightness(1.1); }
-    .hints-section {
-      margin-top: 0.75rem;
-      max-width: min(520px, 100%);
-      width: 100%;
-      margin-left: auto;
-      margin-right: auto;
-      padding: 0 0.5rem;
-      font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
-    }
-    .hints-section h3 {
-      font-size: clamp(0.45rem, 2vw, 0.6rem);
-      color: #69f0ae;
-      margin: 0 0 0.35rem;
-      font-family: 'DM Sans', system-ui, sans-serif;
-      font-weight: 600;
-      letter-spacing: 0.02em;
-      line-height: 1.4;
-    }
-    .hints-grid {
+    .hints-section { margin-top: 0; }
+    .hints-grid:not(.hints-column .hints-grid) {
       display: grid;
       grid-template-columns: 1fr 1fr;
       grid-template-rows: repeat(6, auto);
       grid-auto-flow: column;
-      gap: 6px 12px;
-      row-gap: 6px;
+      gap: 0.6rem 1rem;
     }
-    @media (max-width: 480px) {
-      .hints-grid {
+    @media (max-width: 520px) {
+      .hints-grid:not(.hints-column .hints-grid) {
         grid-template-columns: 1fr;
-        grid-template-rows: auto;
         grid-auto-flow: row;
+        gap: 0.6rem;
       }
     }
     .hint-slot {
-      background: rgba(40, 42, 54, 0.95);
-      border: 1px solid #44475a;
-      border-radius: 4px;
-      padding: 0.4rem 0.6rem;
-      font-size: clamp(0.65rem, 2.2vw, 0.85rem);
-      line-height: 1.35;
-      color: #e8e8e8;
-      min-height: 2.25rem;
+      background: rgba(30, 41, 59, 0.85);
+      border: 1px solid rgba(71, 85, 105, 0.5);
+      border-radius: 12px;
+      padding: 0.65rem 0.85rem;
+      font-size: clamp(0.85rem, 2.6vw, 1rem);
+      line-height: 1.45;
+      color: #e2e8f0;
+      min-height: 3rem;
       display: flex;
       align-items: center;
-      gap: 0.35rem;
+      gap: 0.5rem;
       font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
       letter-spacing: 0.01em;
+      transition: background 0.25s ease, border-color 0.25s ease, transform 0.2s ease, opacity 0.25s ease, box-shadow 0.2s ease;
     }
     .hint-slot.revealed {
-      border-color: #44475a;
-      color: #f0f0f0;
-      font-size: 0.85rem;
+      border-color: rgba(45, 212, 191, 0.35);
+      background: rgba(30, 41, 59, 0.95);
+      color: #f1f5f9;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+      animation: hintReveal 0.35s ease-out;
+    }
+    @keyframes hintReveal {
+      from { opacity: 0.7; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
     }
     .hint-slot.revealed .hint-text {
       font-size: inherit;
-      line-height: 1.35;
+      line-height: 1.45;
     }
     .hint-slot.locked {
-      width: 10px;
-      height: 10px;
-      min-height: 10px;
-      padding: 0;
-      margin: 0;
-      border: none;
-      border-radius: 1px;
-      background: rgba(255, 255, 255, 0.85);
-      box-shadow: 0 0 0 1px rgba(255,255,255,0.2);
+      min-height: 3rem;
+      padding: 0.65rem 0.85rem;
+      border-radius: 12px;
+      border: 1px dashed rgba(71, 85, 105, 0.6);
+      background: rgba(15, 23, 42, 0.5);
     }
     .hint-slot.locked .hint-content {
-      display: none;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      width: 100%;
+    }
+    .hint-slot.locked .hint-num {
+      flex-shrink: 0;
+      width: 1.75rem;
+      height: 1.75rem;
+      border-radius: 8px;
+      background: rgba(71, 85, 105, 0.6);
+      color: #64748b;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      font-weight: 600;
+    }
+    .hint-slot.locked .hint-text {
+      color: #64748b;
+      font-size: 0.85rem;
+      font-style: italic;
     }
     .hint-slot .hint-num {
       flex-shrink: 0;
-      min-width: 1.25rem;
-      color: #6ed3cf;
+      min-width: 1.75rem;
+      height: 1.75rem;
+      border-radius: 8px;
+      background: rgba(45, 212, 191, 0.2);
+      color: #2dd4bf;
       font-weight: 600;
-      font-size: clamp(0.6rem, 2vw, 0.75rem);
+      font-size: clamp(0.7rem, 2.2vw, 0.85rem);
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
     .hint-slot .hint-text {
       flex: 1;
+      min-width: 0;
     }
     .hint-slot .hint-highlight {
-      color: #6ed3cf;
+      color: #2dd4bf;
       font-weight: 600;
     }
     .hint-slot .hint-highlight.alt {
-      color: #fd6860;
-    }
-    .btn-start {
-      font-size: clamp(0.5rem, 2.5vw, 0.75rem);
-      padding: clamp(0.6rem, 2vw, 1rem) clamp(1rem, 4vw, 2.5rem);
+      color: #f87171;
     }
     /* Light mode */
-    html.light-mode body {
-      background: #f5f5f5;
-      color: #2d3748;
-    }
-    html.light-mode .subtitle { color: #c05621; }
-    html.light-mode .mode-btns button {
-      color: #2f8558;
-      border-color: #2f8558;
-    }
-    html.light-mode .mode-btns button:hover {
-      background: rgba(45, 133, 88, 0.12);
-    }
-    html.light-mode .mode-btns button.active {
-      background: #2f8558;
-      color: #fff;
-    }
-    html.light-mode .hearts span { color: #c53030; }
-    html.light-mode .hearts span.lost { color: #a0aec0; opacity: 0.7; }
-    html.light-mode .timer { color: #2d3748; }
-    html.light-mode .map-outer { background: #e2e8f0; }
-    html.light-mode .start-overlay {
-      background: rgba(245, 245, 245, 0.7);
-    }
-    html.light-mode .daily-played-msg { color: #2b6cb0; }
-    html.light-mode .daily-played-msg strong { color: #2d3748; }
-    html.light-mode .game-over-section .game-over-text { color: #2d3748; }
-    html.light-mode .game-over-section .game-id { color: #718096; }
-    html.light-mode .results-facts { color: #4a5568; }
-    html.light-mode .results-facts .highlight { color: #2f8558; }
-    html.light-mode .share-score-wrap { border-top-color: rgba(0,0,0,0.1); }
-    html.light-mode .share-score-label { color: #718096; }
-    html.light-mode .hints-section h3 { color: #2f8558; }
-    html.light-mode .hint-slot {
+    html.light-mode #share-capture-area {
       background: rgba(255, 255, 255, 0.95);
-      border-color: #cbd5e0;
-      color: #2d3748;
+      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(0, 0, 0, 0.06);
     }
-    html.light-mode .hint-slot.revealed {
-      border-color: #cbd5e0;
-      color: #1a202c;
+    html.light-mode body {
+      background: #f8fafc;
+      background-image: radial-gradient(ellipse 100% 60% at 50% 0%, rgba(13, 148, 136, 0.06), transparent);
+      color: #334155;
     }
+    html.light-mode .subtitle { color: #0d9488; }
+    html.light-mode .hearts span { color: #dc2626; }
+    html.light-mode .hearts span.lost { color: #cbd5e1; opacity: 0.6; }
+    html.light-mode .timer-label { color: #64748b; }
+    html.light-mode .timer { color: #0f172a; }
+    html.light-mode .game-hud { background: rgba(241, 245, 249, 0.9); border-color: rgba(226, 232, 240, 0.8); }
+    html.light-mode .map-outer { background: #e2e8f0; }
+    html.light-mode .rainbow-wrap { background: linear-gradient(135deg, rgba(13, 148, 136, 0.15), rgba(99, 102, 241, 0.1)); }
+    html.light-mode .start-overlay { background: rgba(248, 250, 252, 0.85); backdrop-filter: blur(6px); }
+    html.light-mode .daily-played-msg { color: #64748b; }
+    html.light-mode .daily-played-msg strong { color: #0f172a; }
+    html.light-mode .game-over-section { background: rgba(241, 245, 249, 0.95); border-color: rgba(226, 232, 240, 0.9); }
+    html.light-mode .game-over-section .game-over-text { color: #0f172a; }
+    html.light-mode .game-over-section .game-id { color: #64748b; }
+    html.light-mode .results-facts { color: #475569; }
+    html.light-mode .results-facts .highlight { color: #0d9488; }
+    html.light-mode .share-score-wrap { border-top-color: rgba(0,0,0,0.08); }
+    html.light-mode .share-score-label { color: #64748b; }
+    html.light-mode .hints-section h3,
+    html.light-mode .hints-column .hints-column-title { color: #64748b; }
+    html.light-mode .hint-slot {
+      background: rgba(255, 255, 255, 0.9);
+      border-color: rgba(203, 213, 225, 0.8);
+      color: #334155;
+    }
+    html.light-mode .hint-slot.revealed { border-color: rgba(13, 148, 136, 0.35); color: #0f172a; }
     html.light-mode .hint-slot.locked {
-      background: rgba(0, 0, 0, 0.75);
-      box-shadow: 0 0 0 1px rgba(0,0,0,0.2);
+      background: rgba(241, 245, 249, 0.9);
+      border-color: rgba(203, 213, 225, 0.7);
     }
-    html.light-mode .hint-slot .hint-num { color: #2b6cb0; }
-    html.light-mode .hint-slot .hint-highlight { color: #2b6cb0; }
-    html.light-mode .hint-slot .hint-highlight.alt { color: #c53030; }
+    html.light-mode .hint-slot.locked .hint-num { background: rgba(148, 163, 184, 0.3); color: #64748b; }
+    html.light-mode .hint-slot.locked .hint-text { color: #94a3b8; }
+    html.light-mode .hint-slot .hint-num { background: rgba(13, 148, 136, 0.15); color: #0d9488; }
+    html.light-mode .hint-slot .hint-highlight { color: #0d9488; }
+    html.light-mode .hint-slot .hint-highlight.alt { color: #dc2626; }
     html.light-mode #mobile-hints-content {
       background: rgba(15, 23, 42, 0.96);
-      color: #f9fafb;
+      color: #f8fafc;
     }
     /* PC + tablet (481px+): message never shown */
     @media (min-width: 481px) {
@@ -692,20 +841,21 @@
       position: fixed;
       inset: 0;
       z-index: 9999;
-      background: #1e1e2e;
-      color: #e0e0e0;
+      background: #16161e;
+      color: #e2e8f0;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       text-align: center;
       padding: 1.5rem;
-      font-family: 'Press Start 2P', monospace;
+      font-family: 'Outfit', system-ui, sans-serif;
     }
     .desktop-only-msg p {
       margin: 0 0 1rem;
-      font-size: clamp(0.5rem, 2.5vw, 0.75rem);
+      font-size: clamp(0.75rem, 3vw, 1rem);
       line-height: 1.6;
       max-width: 90%;
+      font-weight: 500;
     }
     .desktop-only-msg-sub {
       font-size: clamp(0.4rem, 2vw, 0.55rem) !important;
@@ -758,21 +908,31 @@
     </header>
     <div class="game-hud">
       <div class="hearts" id="hearts"></div>
-      <div class="timer" id="timer">00:00.000</div>
+      <div class="timer-wrap"><span class="timer-label">Timer</span> <span class="timer" id="timer">00:00.000</span></div>
     </div>
   </div>
 
-  <div class="rainbow-wrap">
-    <div class="map-outer">
-      <div class="start-overlay" id="start-overlay">
-        <div id="start-content">
-          <button type="button" class="btn-start" id="btn-start">START</button>
+  <div class="map-and-hints-wrap" id="map-and-hints-wrap">
+    <div class="hints-column hints-column-left" id="hints-column-left">
+      <h3 class="hints-column-title">Hints 1–5</h3>
+      <div class="hints-grid" id="hints-grid-left"></div>
+    </div>
+    <div class="rainbow-wrap">
+      <div class="map-outer">
+        <div class="start-overlay" id="start-overlay">
+          <div id="start-content">
+            <button type="button" class="btn-start" id="btn-start">START</button>
+          </div>
+          <div id="daily-played-msg" class="daily-played-msg" style="display: none;">
+            <strong>You've already played today's game.</strong><br>Come back tomorrow for a new state!
+          </div>
         </div>
-        <div id="daily-played-msg" class="daily-played-msg" style="display: none;">
-          <strong>You've already played today's game.</strong><br>Come back tomorrow for a new state!
-        </div>
+        <iframe id="map-frame" src="map.html" title="Nigeria map"></iframe>
       </div>
-      <iframe id="map-frame" src="map.html" title="Nigeria map"></iframe>
+    </div>
+    <div class="hints-column hints-column-right" id="hints-column-right">
+      <h3 class="hints-column-title">Hints 6–11</h3>
+      <div class="hints-grid" id="hints-grid-right"></div>
     </div>
   </div>
 
@@ -795,11 +955,7 @@
       </div>
     </div>
   </section>
-  </div>
-
-  <div class="hints-section" id="hints-section">
-    <h3>Hints (1 revealed at start; each wrong guess reveals another)</h3>
-    <div class="hints-grid" id="hints-grid"></div>
+  <div class="hints-section" id="hints-section" style="display: none;" aria-hidden="true"></div>
   </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" crossorigin="anonymous"></script>
@@ -917,6 +1073,67 @@
           default: return '—';
         }
       }
+
+      function getStatesMatchingHint(state, hintNum) {
+        if (!state || hintNum < 1 || hintNum > NUM_HINTS) return [];
+        var capital = STATE_CAPITALS[state] || '';
+        var region = STATE_REGIONS[state] || '';
+        var words = state.split(/\s+/).length;
+        var first = state.charAt(0);
+        var last = state.charAt(state.length - 1);
+        var capFirst = capital.charAt(0);
+        var capLast = capital.charAt(capital.length - 1);
+        var over10m = STATE_POPULATION_OVER_10M[state] !== false;
+        var languages = STATE_LANGUAGES[state] || '';
+        var food = STATE_FOOD[state] || '';
+        var governor = STATE_GOVERNOR[state] || '';
+        var list = [];
+        for (var i = 0; i < STATE_NAMES.length; i++) {
+          var s = STATE_NAMES[i];
+          var cap = STATE_CAPITALS[s] || '';
+          var match = false;
+          switch (hintNum) {
+            case 1: match = (STATE_POPULATION_OVER_10M[s] !== false) === over10m; break;
+            case 2: match = s.split(/\s+/).length === words; break;
+            case 3: match = s.charAt(0) === first; break;
+            case 4: match = s.charAt(s.length - 1) === last; break;
+            case 5: match = cap.length === capital.length; break;
+            case 6: match = cap.charAt(0) === capFirst; break;
+            case 7: match = (STATE_REGIONS[s] || '') === region; break;
+            case 8: match = cap.charAt(cap.length - 1) === capLast; break;
+            case 9: match = (STATE_LANGUAGES[s] || '') === languages; break;
+            case 10: match = (STATE_FOOD[s] || '') === food; break;
+            case 11: match = (STATE_GOVERNOR[s] || '') === governor; break;
+            default: break;
+          }
+          if (match) list.push(s);
+        }
+        return list;
+      }
+
+      function updateMapHintHighlight() {
+        if (!targetState || !mapFrame || !mapFrame.contentWindow || hintOrder.length !== NUM_HINTS) return;
+        var revealed = getRevealedHintCount();
+        if (revealed < 1) {
+          mapFrame.contentWindow.postMessage({ type: 'clear-highlight' }, '*');
+          return;
+        }
+        var hintIndex = hintOrder[revealed - 1];
+        if (hintIndex >= 2 && hintIndex <= 5) {
+          mapFrame.contentWindow.postMessage({ type: 'clear-highlight' }, '*');
+          return;
+        }
+        var stateNames = getStatesMatchingHint(targetState, hintIndex);
+        if (stateNames.length < 6) {
+          mapFrame.contentWindow.postMessage({ type: 'clear-highlight' }, '*');
+          return;
+        }
+        var others = stateNames.filter(function (s) { return s !== targetState; });
+        var picked = [targetState];
+        others = shuffle(others);
+        for (var i = 0; i < 5 && i < others.length; i++) picked.push(others[i]);
+        mapFrame.contentWindow.postMessage({ type: 'highlight-possible-states', stateNames: picked }, '*');
+      }
       var LIVES = 11;
       var gameId = 1;
       var targetState = null;
@@ -942,8 +1159,10 @@
         if (!lastShareResult) return 'Think you know Nigeria better?\n' + SHARE_BASE_URL;
         var r = lastShareResult;
         var hintsUsed = 1 + (r.wrongCount || 0);
+        var timeStr = r.elapsedSec != null ? formatElapsed(r.elapsedSec) : '—';
         var lines = [
           '\uD83D\uDCBB Mili #' + r.gameId,
+          '\u23F1\uFE0F Timer: ' + timeStr,
           '\uD83D\uDCA1 Hints used: ' + hintsUsed + '/10',
           r.won ? '\u2705 Got it!' : '\u274C Didn\'t get it',
           'Can you beat my score? 🇳🇬',
@@ -994,6 +1213,58 @@
         } catch (e) {}
         document.body.removeChild(ta);
       }
+      var MAP_IMAGE_TIMEOUT_MS = 4000;
+      function getMapImageFromFrame(callback) {
+        var frame = document.getElementById('map-frame');
+        if (!frame || !frame.contentWindow) {
+          callback(null);
+          return;
+        }
+        var done = false;
+        function finish(dataUrl) {
+          if (done) return;
+          done = true;
+          window.removeEventListener('message', onMessage);
+          if (timeout) clearTimeout(timeout);
+          callback(dataUrl || null);
+        }
+        function onMessage(e) {
+          if (e.data && e.data.type === 'mapImage') finish(e.data.dataUrl || null);
+        }
+        window.addEventListener('message', onMessage);
+        var timeout = setTimeout(function () { finish(null); }, MAP_IMAGE_TIMEOUT_MS);
+        try {
+          frame.contentWindow.postMessage({ type: 'getMapImage' }, '*');
+        } catch (err) {
+          finish(null);
+        }
+      }
+      function applyMapOverlay(dataUrl, callback) {
+        var mapOuter = document.querySelector('#share-capture-area .map-outer');
+        var frame = document.getElementById('map-frame');
+        if (!dataUrl || !mapOuter) {
+          callback();
+          return;
+        }
+        var overlay = document.createElement('div');
+        overlay.className = 'map-capture-overlay';
+        var img = document.createElement('img');
+        img.alt = 'Nigeria map';
+        img.src = dataUrl;
+        overlay.appendChild(img);
+        mapOuter.appendChild(overlay);
+        if (frame) frame.style.visibility = 'hidden';
+        function run() { callback(); }
+        if (img.complete) run();
+        else img.onload = run;
+        img.onerror = run;
+      }
+      function removeMapOverlay() {
+        var overlay = document.querySelector('#share-capture-area .map-outer .map-capture-overlay');
+        var frame = document.getElementById('map-frame');
+        if (overlay && overlay.parentNode) overlay.parentNode.removeChild(overlay);
+        if (frame) frame.style.visibility = '';
+      }
       function captureThenOpenLinkAndDownloadImage(openUrl) {
         var el = document.getElementById('share-capture-area');
         if (!el || typeof html2canvas === 'undefined') {
@@ -1003,25 +1274,34 @@
         }
         var btn = document.getElementById('btn-share-screenshot');
         if (btn) { btn.disabled = true; btn.textContent = '...'; }
-        html2canvas(el, {
-          useCORS: true,
-          allowTaint: true,
-          scale: Math.min(2, window.devicePixelRatio || 1),
-          backgroundColor: document.documentElement.classList.contains('light-mode') ? '#f5f5f5' : '#1e1e2e',
-          logging: false,
-          ignoreElements: function (e) { return e.id === 'btn-share-screenshot' || e.id === 'btn-copy-score' || e.id === 'btn-share-whatsapp' || e.id === 'btn-share-facebook' || e.id === 'btn-share-twitter'; }
-        }).then(function (canvas) {
-          if (btn) { btn.disabled = false; btn.textContent = 'Share'; }
-          var link = document.createElement('a');
-          link.download = 'mili-score.png';
-          link.href = canvas.toDataURL('image/png');
-          link.click();
-          copyShareTextToClipboard();
-          if (openUrl) window.open(openUrl, '_blank', 'noopener');
-        }).catch(function () {
-          if (btn) { btn.disabled = false; btn.textContent = 'Share'; }
-          copyShareTextToClipboard();
-          if (openUrl) window.open(openUrl, '_blank', 'noopener');
+        function doCapture() {
+          html2canvas(el, {
+            useCORS: true,
+            allowTaint: true,
+            scale: Math.min(2, window.devicePixelRatio || 1),
+            backgroundColor: document.documentElement.classList.contains('light-mode') ? '#f8fafc' : '#16161e',
+            logging: false,
+            ignoreElements: function (e) { return e.id === 'btn-share-screenshot' || e.id === 'btn-copy-score' || e.id === 'btn-share-whatsapp' || e.id === 'btn-share-facebook' || e.id === 'btn-share-twitter'; }
+          }).then(function (canvas) {
+            removeMapOverlay();
+            if (btn) { btn.disabled = false; btn.textContent = 'Share'; }
+            var link = document.createElement('a');
+            link.download = 'mili-score.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+            copyShareTextToClipboard();
+            if (openUrl) window.open(openUrl, '_blank', 'noopener');
+          }).catch(function () {
+            removeMapOverlay();
+            if (btn) { btn.disabled = false; btn.textContent = 'Share'; }
+            copyShareTextToClipboard();
+            if (openUrl) window.open(openUrl, '_blank', 'noopener');
+          });
+        }
+        getMapImageFromFrame(function (dataUrl) {
+          applyMapOverlay(dataUrl, function () {
+            doCapture();
+          });
         });
       }
       function shareViaWhatsApp() {
@@ -1044,30 +1324,37 @@
         }
         var btn = document.getElementById('btn-share-screenshot');
         if (btn) { btn.disabled = true; btn.textContent = '...'; }
-        html2canvas(el, {
-          useCORS: true,
-          allowTaint: true,
-          scale: Math.min(2, window.devicePixelRatio || 1),
-          backgroundColor: document.documentElement.classList.contains('light-mode') ? '#f5f5f5' : '#1e1e2e',
-          logging: false,
-          ignoreElements: function (e) { return e.id === 'btn-share-screenshot' || e.id === 'btn-copy-score' || e.id === 'btn-share-whatsapp' || e.id === 'btn-share-facebook' || e.id === 'btn-share-twitter'; }
-        }).then(function (canvas) {
-          canvas.toBlob(function (blob) {
-            if (btn) { btn.disabled = false; btn.textContent = 'Share'; }
-            if (!blob) { copyShareText(); return; }
-            var file = new File([blob], 'mili-score.png', { type: 'image/png' });
-            var text = getShareText();
-            if (navigator.share && navigator.canShare && navigator.canShare({ files: [file], text: text })) {
-              navigator.share({ title: 'Mili', text: text, files: [file] }).then(function () {}).catch(function () {
+        function doCapture() {
+          html2canvas(el, {
+            useCORS: true,
+            allowTaint: true,
+            scale: Math.min(2, window.devicePixelRatio || 1),
+            backgroundColor: document.documentElement.classList.contains('light-mode') ? '#f8fafc' : '#16161e',
+            logging: false,
+            ignoreElements: function (e) { return e.id === 'btn-share-screenshot' || e.id === 'btn-copy-score' || e.id === 'btn-share-whatsapp' || e.id === 'btn-share-facebook' || e.id === 'btn-share-twitter'; }
+          }).then(function (canvas) {
+            removeMapOverlay();
+            canvas.toBlob(function (blob) {
+              if (btn) { btn.disabled = false; btn.textContent = 'Share'; }
+              if (!blob) { copyShareText(); return; }
+              var file = new File([blob], 'mili-score.png', { type: 'image/png' });
+              var text = getShareText();
+              if (navigator.share && navigator.canShare && navigator.canShare({ files: [file], text: text })) {
+                navigator.share({ title: 'Mili', text: text, files: [file] }).then(function () {}).catch(function () {
+                  fallbackShareScreenshot(canvas, text);
+                });
+              } else {
                 fallbackShareScreenshot(canvas, text);
-              });
-            } else {
-              fallbackShareScreenshot(canvas, text);
-            }
-          }, 'image/png', 0.95);
-        }).catch(function () {
-          if (btn) { btn.disabled = false; btn.textContent = 'Share'; }
-          copyShareText();
+              }
+            }, 'image/png', 0.95);
+          }).catch(function () {
+            removeMapOverlay();
+            if (btn) { btn.disabled = false; btn.textContent = 'Share'; }
+            copyShareText();
+          });
+        }
+        getMapImageFromFrame(function (dataUrl) {
+          applyMapOverlay(dataUrl, doCapture);
         });
       }
       function fallbackShareScreenshot(canvas, text) {
@@ -1078,7 +1365,8 @@
         copyShareText();
       }
 
-      var hintsGridEl = document.getElementById('hints-grid');
+      var hintsGridLeft = document.getElementById('hints-grid-left');
+      var hintsGridRight = document.getElementById('hints-grid-right');
       var mobileOverlay = document.getElementById('mobile-map-overlay');
       var mobileOverlayInner = document.getElementById('mobile-map-inner');
       var mobileHintsBar = document.getElementById('mobile-hints-bar');
@@ -1100,9 +1388,11 @@
       }
 
       function renderHints() {
-        if (!hintsGridEl || !targetState || hintOrder.length !== NUM_HINTS) return;
-        hintsGridEl.innerHTML = '';
+        if (!hintsGridLeft || !hintsGridRight || !targetState || hintOrder.length !== NUM_HINTS) return;
+        hintsGridLeft.innerHTML = '';
+        hintsGridRight.innerHTML = '';
         var revealed = getRevealedHintCount();
+        var leftCount = 5;
         for (var i = 1; i <= NUM_HINTS; i++) {
           var slot = document.createElement('div');
           slot.className = 'hint-slot' + (i <= revealed ? ' revealed' : ' locked');
@@ -1116,15 +1406,19 @@
           text.className = 'hint-text';
           if (i <= revealed) {
             text.innerHTML = getHint(targetState, hintOrder[i - 1]);
+          } else {
+            text.textContent = '—';
           }
           content.appendChild(text);
           slot.appendChild(content);
-          hintsGridEl.appendChild(slot);
+          if (i <= leftCount) hintsGridLeft.appendChild(slot);
+          else hintsGridRight.appendChild(slot);
         }
         if (revealed > 0 && targetState && hintOrder.length === NUM_HINTS) {
           var currentHint = getHint(targetState, hintOrder[revealed - 1]);
           showMobileHint(currentHint);
         }
+        updateMapHintHighlight();
       }
 
       function startTimer() {
@@ -1200,7 +1494,13 @@
           'The state is <span class="highlight">' + (saved.state || '—') + '</span>.<br>' +
           (saved.wrongGuesses && saved.wrongGuesses.length ? 'Wrong guesses: <span class="highlight">' + saved.wrongGuesses.join(', ') + '</span>.' : '');
         resultsFacts.style.display = 'block';
-        setPathFill(saved.state, saved.won ? '#00e676' : '#9e4a4a');
+        if (mapFrame && mapFrame.contentWindow) {
+          mapFrame.contentWindow.postMessage({ type: 'clear-highlight' }, '*');
+        }
+        setPathFill(saved.state, '#00e676');
+        if (saved.wrongGuesses && saved.wrongGuesses.length) {
+          for (var w = 0; w < saved.wrongGuesses.length; w++) setPathFill(saved.wrongGuesses[w], '#9e4a4a');
+        }
         startOverlay.classList.add('hidden');
         document.getElementById('start-content').style.display = 'none';
         document.getElementById('daily-played-msg').style.display = 'none';
@@ -1290,7 +1590,15 @@
           'The state is <span class="highlight">' + state + '</span>.<br>' +
           (wrongGuesses.length ? 'Wrong guesses: <span class="highlight">' + wrongGuesses.join(', ') + '</span>.' : '');
         resultsFacts.style.display = 'block';
-        if (won) setPathFill(state, '#00e676'); else setPathFill(state, '#9e4a4a');
+        if (mapFrame && mapFrame.contentWindow) {
+          mapFrame.contentWindow.postMessage({ type: 'clear-highlight' }, '*');
+        }
+        if (won) {
+          setPathFill(state, '#00e676');
+        } else {
+          setPathFill(state, '#00e676');
+          for (var w = 0; w < wrongGuesses.length; w++) setPathFill(wrongGuesses[w], '#9e4a4a');
+        }
         if (currentMode === 'daily') {
           setPlayedToday();
           saveDailyResult(state, capital, wrongGuesses, won, gameId);
@@ -1317,10 +1625,8 @@
         renderHints();
         startTimer();
         gameId++;
-        var hintsSection = document.getElementById('hints-section');
-        if (hintsSection) {
-          hintsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
+        var mapWrap = document.getElementById('map-and-hints-wrap');
+        if (mapWrap) mapWrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
         if (mapFrame && mapFrame.contentWindow) {
           mapFrame.contentWindow.postMessage({ type: 'start-game', targetState: targetState }, '*');
         }
@@ -1330,11 +1636,14 @@
         if (!targetState) return;
         if (stateName === targetState) {
           stopTimer();
-          setPathFill(stateName, '#69f0ae');
+          setPathFill(stateName, '#00e676');
           var capital = STATE_CAPITALS[stateName] || '—';
           setPlayedToday();
           saveDailyResult(stateName, capital, wrongGuesses, true, gameId);
-          window.location.href = 'https://omg10.com/4/10713611';
+          if (mapFrame && mapFrame.contentWindow) {
+            mapFrame.contentWindow.postMessage({ type: 'clear-highlight' }, '*');
+          }
+          showGameOver(true);
           return;
         }
         wrongGuesses.push(stateName);
@@ -1343,7 +1652,7 @@
         renderHearts();
         renderHints();
         var revealed = getRevealedHintCount();
-        var slots = hintsGridEl.querySelectorAll('.hint-slot');
+        var slots = document.querySelectorAll('#hints-grid-left .hint-slot, #hints-grid-right .hint-slot');
         if (slots[revealed - 1]) slots[revealed - 1].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         if (livesLeft <= 0) showGameOver(false);
       }
@@ -1383,7 +1692,15 @@
         sendThemeToMap();
         if (hasPlayedToday()) {
           var saved = getSavedDailyResult();
-          if (saved && saved.state) setPathFill(saved.state, saved.won ? '#00e676' : '#9e4a4a');
+          if (saved && saved.state) {
+            if (mapFrame && mapFrame.contentWindow) {
+              mapFrame.contentWindow.postMessage({ type: 'clear-highlight' }, '*');
+            }
+            setPathFill(saved.state, '#00e676');
+            if (saved.wrongGuesses && saved.wrongGuesses.length) {
+              for (var w = 0; w < saved.wrongGuesses.length; w++) setPathFill(saved.wrongGuesses[w], '#9e4a4a');
+            }
+          }
         }
       });
 
