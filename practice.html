@@ -19,8 +19,6 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <!-- ADS: vignette banner -->
-  <script>(function(s){s.dataset.zone='10705404',s.src='https://gizokraijaw.net/vignette.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
   <style>
     * { box-sizing: border-box; }
     html {
@@ -400,101 +398,256 @@
       font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
       border: 1px solid rgba(71, 85, 105, 0.4);
     }
-    #mobile-hints-minimize {
-      flex-shrink: 0;
-      width: 32px;
-      height: 32px;
-      border: none;
-      border-radius: 10px;
-      background: rgba(71, 85, 105, 0.5);
-      color: #f1f5f9;
-      font-size: 1rem;
-      line-height: 1;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 0;
-      transition: background 0.2s ease;
-    }
-    #mobile-hints-minimize:hover { background: rgba(100, 116, 139, 0.6); }
-    #mobile-hints-icon {
-      display: none;
-      pointer-events: auto;
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      background: rgba(0, 0, 0, 0.85);
-      color: #f9fafb;
-      font-size: 1.65rem;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-      cursor: default;
-    }
-    #mobile-hints-bar.minimized .hint-bar-inner {
-      display: none !important;
-    }
-    #mobile-hints-bar.minimized #mobile-hints-icon {
-      display: flex;
-    }
-    #mobile-hints-bar.minimized {
-      justify-content: flex-end;
-      padding-right: 12px;
-    }
-    #mobile-hints-bar.minimized.visible {
-      transform: translateY(0);
-    }
     @media (max-width: 768px) {
-      .rainbow-wrap {
-        display: none;
-      }
       #mobile-map-overlay {
+        display: none !important;
+      }
+      #mobile-hints-bar {
+        display: none !important;
+        visibility: hidden !important;
+        pointer-events: none !important;
+      }
+      html, body {
+        height: 100%;
+        max-height: 100dvh;
+        overflow: hidden;
+        overflow-x: hidden;
+      }
+      body {
+        min-height: 0;
+        padding: 0.2rem 0.35rem;
+        padding-left: max(0.35rem, env(safe-area-inset-left));
+        padding-right: max(0.35rem, env(safe-area-inset-right));
+        padding-bottom: max(0.2rem, env(safe-area-inset-bottom));
+      }
+      #share-capture-area {
+        flex-direction: column;
+        min-height: 0;
+        flex: 1;
+        padding: 0.2rem 0.35rem;
+        max-width: 100%;
+        overflow: hidden;
+      }
+      #main-game-layout {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto auto minmax(180px, 1fr) auto;
+        grid-template-areas:
+          "header header"
+          "hintsLeft hintsRight"
+          "map map"
+          "heartsArea timerArea";
+        gap: 0.25rem;
+        align-items: stretch;
+        width: 100%;
+        min-height: 0;
+        flex: 1;
+        padding: 0;
+        overflow: hidden;
+      }
+      #main-game-layout .header {
+        grid-area: header;
+        background: #1e1e2e;
+        padding: 0.3rem 0.5rem;
+        border-radius: 8px;
+        margin-bottom: 0;
+        border: 1px solid rgba(71, 85, 105, 0.35);
+      }
+      #main-game-layout .header .game-name {
+        font-size: 1rem;
+        margin-bottom: 0.05rem;
+      }
+      #main-game-layout .header .subtitle {
+        font-size: 0.65rem;
+        margin-bottom: 0.05rem;
+      }
+      #main-game-layout .header .practice-msg {
+        font-size: 0.6rem;
+        color: #94a3b8;
+        margin-bottom: 0.2rem;
+      }
+      #main-game-layout .header .mode-btns {
+        gap: 0.25rem;
+        margin-bottom: 0;
+      }
+      #main-game-layout .header .mode-btns button,
+      #main-game-layout .header .mode-btns .mode-btns-link {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.6rem;
+        min-height: 28px;
+      }
+      #main-game-layout .game-hud {
+        display: contents;
+      }
+      #main-game-layout .hearts {
+        grid-area: heartsArea;
         display: flex;
+        flex-wrap: nowrap;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 0.1rem;
+        padding: 0.2rem 0.35rem;
+        background: rgba(30, 30, 46, 0.85);
+        border-radius: 6px;
+        border: 1px solid rgba(71, 85, 105, 0.3);
+        font-size: 0.65rem;
       }
-      #top-bar-wrap {
-        position: relative;
-        z-index: 1002;
-        transition: transform 0.3s ease, border-radius 0.3s ease, padding 0.3s ease, box-shadow 0.3s ease;
+      #main-game-layout .timer-wrap {
+        grid-area: timerArea;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 0.2rem;
+        padding: 0.2rem 0.35rem;
+        background: rgba(30, 30, 46, 0.85);
+        border-radius: 8px;
+        border: 1px solid rgba(71, 85, 105, 0.3);
+        min-height: 1.75rem;
+        min-width: 0;
       }
-      #top-bar-wrap.minimized {
-        position: fixed;
-        top: max(8px, env(safe-area-inset-top));
-        right: 12px;
-        left: auto;
-        width: auto;
-        max-width: none;
-        padding: 0.4rem 0.75rem;
-        border-radius: 14px;
-        background: rgba(22, 22, 30, 0.95);
-        border: 1px solid rgba(71, 85, 105, 0.4);
-        box-shadow: 0 8px 24px rgba(0,0,0,0.35);
-        cursor: pointer;
+      #main-game-layout .timer-wrap .timer-label {
+        font-size: 0.55rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #94a3b8;
+        margin-bottom: 0;
       }
-      #top-bar-wrap.minimized .header {
+      #main-game-layout .timer-wrap .timer {
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: #f8fafc;
+        letter-spacing: 0.02em;
+      }
+      #main-game-layout .hints-column-left,
+      #main-game-layout .hints-column-right {
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+        max-height: 120px;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+      #main-game-layout .hints-column-left {
+        grid-area: hintsLeft;
+        grid-column: 1 / -1;
+        max-height: none;
+      }
+      #main-game-layout .hints-column-right {
+        grid-area: hintsRight;
         display: none;
       }
-      #top-bar-wrap.minimized .game-hud {
-        margin: 0;
-        padding: 0;
-        gap: 1rem;
-        font-size: 0.6rem;
+      #main-game-layout .mobile-hint-selector {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
       }
-      #top-bar-wrap.minimized .game-hud .hearts {
-        font-size: 1.05rem;
+      #main-game-layout .mobile-hint-numbers {
+        display: flex;
+        flex-wrap: nowrap;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 0.2rem;
       }
-      #top-bar-wrap.minimized .game-hud .timer {
-        font-size: 0.9rem;
+      #main-game-layout .mobile-hint-num {
+        flex-shrink: 0;
+        min-width: 1.5rem;
+        height: 1.5rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.7rem;
+        font-weight: 600;
+        border-radius: 6px;
+        border: 1px solid rgba(71, 85, 105, 0.4);
+        background: rgba(30, 41, 59, 0.9);
+        color: #64748b;
+        cursor: default;
+        transition: background 0.2s, border-color 0.2s, color 0.2s;
       }
-      .header,
-      .game-hud {
+      #main-game-layout .mobile-hint-num.revealed {
+        cursor: pointer;
+        color: #e2e8f0;
+        border-color: rgba(45, 212, 191, 0.35);
+      }
+      #main-game-layout .mobile-hint-num.revealed:active,
+      #main-game-layout .mobile-hint-num.active {
+        background: rgba(45, 212, 191, 0.2);
+        border-color: rgba(45, 212, 191, 0.5);
+        color: #2dd4bf;
+      }
+      #main-game-layout .mobile-hint-content {
+        padding: 0.25rem 0.4rem;
+        font-size: 0.65rem;
+        line-height: 1.3;
+        border-radius: 6px;
+        background: rgba(30, 41, 59, 0.95);
+        border: 1px solid rgba(45, 212, 191, 0.25);
+        color: #e2e8f0;
+        min-height: 1.6rem;
+      }
+      #main-game-layout .mobile-hint-content .hint-highlight { color: #2dd4bf; font-weight: 600; }
+      #main-game-layout .mobile-hint-content .hint-highlight.alt { color: #f472b6; }
+      html.light-mode #main-game-layout .mobile-hint-num.revealed { color: #0f172a; }
+      html.light-mode #main-game-layout .mobile-hint-num.active { color: #0d9488; }
+      html.light-mode #main-game-layout .mobile-hint-content { color: #0f172a; border-color: rgba(13, 148, 136, 0.3); }
+      html.light-mode #main-game-layout .mobile-hint-content .hint-highlight { color: #0d9488; }
+      #main-game-layout .hints-column-title {
+        font-size: 0.65rem;
+        margin-bottom: 0.15rem;
+        color: #94a3b8;
+      }
+      #main-game-layout .hint-slot {
+        padding: 0.5rem 0.65rem;
+        font-size: 0.75rem;
+        line-height: 1.35;
+        border-radius: 10px;
+        background: rgba(30, 41, 59, 0.9);
+        border: 1px solid rgba(71, 85, 105, 0.4);
+        color: #e2e8f0;
+      }
+      #main-game-layout .hint-slot.revealed {
+        background: rgba(30, 41, 59, 0.95);
+        border-color: rgba(45, 212, 191, 0.25);
+      }
+      #main-game-layout .hint-slot .hint-num {
+        font-size: 0.65rem;
+        padding: 0.15rem 0.4rem;
+      }
+      #main-game-layout .rainbow-wrap {
+        grid-area: map;
+        min-width: 0;
+        min-height: 180px;
+        height: 100%;
+        align-self: stretch;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+        display: block;
         position: relative;
-        z-index: 1002;
-        background: transparent;
       }
-      #top-bar-wrap:not(.minimized) .header,
-      #top-bar-wrap:not(.minimized) .game-hud {
-        background: #1e1e2e;
+      #main-game-layout .rainbow-wrap .map-outer {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        border-radius: 12px;
+      }
+      #main-game-layout .rainbow-wrap .map-outer iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 100%;
+        height: 100%;
+        display: block;
+        border: none;
+      }
+      #top-bar-wrap,
+      #map-and-hints-wrap {
+        display: contents;
       }
       .mobile-start-overlay-wrap {
         position: fixed;
@@ -508,26 +661,77 @@
       .mobile-start-overlay-wrap.hidden {
         display: none;
       }
-      html.light-mode #top-bar-wrap.minimized {
-        background: #f5f5f5;
-        box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+      html.light-mode #main-game-layout .header {
+        background: #f8fafc;
+        border-color: rgba(226, 232, 240, 0.8);
       }
-      html.light-mode #top-bar-wrap:not(.minimized) .header,
-      html.light-mode #top-bar-wrap:not(.minimized) .game-hud {
-        background: #f5f5f5;
+      html.light-mode #main-game-layout .hearts,
+      html.light-mode #main-game-layout .timer-wrap {
+        background: rgba(241, 245, 249, 0.95);
+        border-color: rgba(226, 232, 240, 0.6);
+      }
+      html.light-mode #main-game-layout .timer-wrap .timer {
+        color: #0f172a;
+      }
+      html.light-mode #main-game-layout .hint-slot {
+        background: rgba(255, 255, 255, 0.92);
+        border-color: rgba(203, 213, 225, 0.7);
+        color: #334155;
+      }
+      html.light-mode #main-game-layout .hint-slot.revealed {
+        border-color: rgba(13, 148, 136, 0.3);
+      }
+      .game-over-section {
+        margin-top: 0.15rem;
+        padding: 0.2rem 0.35rem;
+        border-radius: 6px;
+        flex: 0 1 auto;
+        min-height: 0;
+        overflow: hidden;
+      }
+      .game-over-section .game-over-text {
+        font-size: 0.62rem;
+        margin-bottom: 0.05rem;
+      }
+      .game-over-section .game-id {
+        font-size: 0.5rem;
+        margin-bottom: 0.12rem;
+      }
+      .game-over-btns {
+        gap: 0.22rem;
+        margin-bottom: 0.22rem;
+      }
+      .btn-results, .btn-play-again {
+        padding: 0.2rem 0.4rem;
+        min-height: 24px;
+        font-size: 0.54rem;
+        border-radius: 6px;
+      }
+      .results-facts {
+        font-size: 0.48rem;
+        line-height: 1.28;
+        padding: 0.06rem 0;
+      }
+      .share-score-wrap {
+        margin-top: 0.18rem;
+        padding-top: 0.18rem;
+        border-top-width: 1px;
+      }
+      .share-score-label {
+        font-size: 0.42rem;
+        margin-bottom: 0.08rem;
+      }
+      .share-btns {
+        gap: 0.2rem;
+      }
+      .btn-copy-score, .btn-share-whatsapp, .btn-share-facebook, .btn-share-twitter,
+      .btn-share-screenshot {
+        padding: 0.18rem 0.28rem;
+        min-height: 22px;
+        font-size: 0.44rem;
       }
       #mobile-hints-bar {
-        top: 52px;
-        padding-top: 0.5rem;
-      }
-      #mobile-hints-bar.minimized {
-        top: auto;
-        left: auto;
-        right: 12px;
-        bottom: 100px;
-        width: auto;
-        padding: 0;
-        padding-right: 0;
+        display: none !important;
       }
     }
     .start-overlay {
@@ -567,49 +771,49 @@
     .game-over-section {
       display: none;
       text-align: center;
-      margin-top: 1.25rem;
+      margin-top: 0.75rem;
       width: 100%;
       max-width: 100%;
-      padding: 1rem 0.75rem;
+      padding: 0.6rem 0.65rem;
       background: rgba(30, 41, 59, 0.6);
-      border-radius: 16px;
+      border-radius: 12px;
       border: 1px solid rgba(71, 85, 105, 0.4);
       animation: gameOverIn 0.4s ease-out;
     }
     @keyframes gameOverIn {
-      from { opacity: 0; transform: translateY(-8px); }
+      from { opacity: 0; transform: translateY(-6px); }
       to { opacity: 1; transform: translateY(0); }
     }
     .game-over-section.visible { display: block; }
     .game-over-section .game-over-text {
-      font-size: clamp(0.7rem, 2.8vw, 1.05rem);
+      font-size: clamp(0.65rem, 2.4vw, 0.9rem);
       color: #f8fafc;
-      margin-bottom: 0.4rem;
+      margin-bottom: 0.25rem;
       font-weight: 600;
     }
     .game-over-section .game-id {
-      font-size: clamp(0.55rem, 2.2vw, 0.7rem);
+      font-size: clamp(0.5rem, 2vw, 0.65rem);
       color: #94a3b8;
-      margin-bottom: 0.85rem;
+      margin-bottom: 0.5rem;
       font-weight: 500;
     }
     .game-over-btns {
       display: flex;
-      gap: 0.75rem;
+      gap: 0.5rem;
       justify-content: center;
       flex-wrap: wrap;
-      margin-bottom: 1rem;
+      margin-bottom: 0.6rem;
     }
     .btn-results, .btn-play-again {
       font-family: 'Outfit', system-ui, sans-serif;
-      font-size: clamp(0.6rem, 2.4vw, 0.8rem);
+      font-size: clamp(0.55rem, 2.2vw, 0.72rem);
       font-weight: 600;
-      padding: clamp(0.55rem, 2vw, 0.9rem) clamp(1rem, 3vw, 1.75rem);
-      min-height: 44px;
+      padding: clamp(0.4rem, 1.5vw, 0.6rem) clamp(0.75rem, 2.5vw, 1.25rem);
+      min-height: 34px;
       background: linear-gradient(135deg, #2dd4bf, #14b8a6);
       color: #0f172a;
       border: none;
-      border-radius: 12px;
+      border-radius: 10px;
       cursor: pointer;
       transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
@@ -619,38 +823,39 @@
     }
     .btn-results:focus-visible, .btn-play-again:focus-visible { outline: 2px solid #2dd4bf; outline-offset: 2px; }
     .results-facts {
+      display: block;
       text-align: left;
-      font-size: clamp(0.6rem, 2.4vw, 0.9rem);
-      line-height: 1.85;
+      font-size: clamp(0.55rem, 2.2vw, 0.8rem);
+      line-height: 1.6;
       color: #cbd5e1;
       max-width: 100%;
       margin: 0 auto;
-      padding: 0.5rem 0;
+      padding: 0.3rem 0;
     }
     .results-facts .highlight { color: #2dd4bf; font-weight: 600; }
     .share-score-wrap {
-      margin-top: 1rem;
-      padding-top: 1rem;
+      margin-top: 0.6rem;
+      padding-top: 0.6rem;
       border-top: 1px solid rgba(148, 163, 184, 0.2);
     }
     .share-score-label {
-      font-size: clamp(0.55rem, 2.2vw, 0.7rem);
+      font-size: clamp(0.5rem, 2vw, 0.62rem);
       color: #94a3b8;
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.35rem;
       font-weight: 500;
     }
     .share-btns {
       display: flex;
       flex-wrap: wrap;
-      gap: 0.5rem;
+      gap: 0.4rem;
       justify-content: center;
       align-items: center;
     }
-    .btn-copy-score, .btn-share-whatsapp, .btn-share-facebook, .btn-share-twitter {
+    .btn-copy-score, .btn-share-screenshot, .btn-share-whatsapp, .btn-share-facebook, .btn-share-twitter {
       font-family: inherit;
-      font-size: clamp(0.5rem, 2.2vw, 0.68rem);
-      padding: 0.45rem 0.75rem;
-      min-height: 38px;
+      font-size: clamp(0.48rem, 2vw, 0.62rem);
+      padding: 0.35rem 0.6rem;
+      min-height: 30px;
       border: none;
       border-radius: 10px;
       cursor: pointer;
@@ -816,62 +1021,19 @@
       background: rgba(15, 23, 42, 0.96);
       color: #f8fafc;
     }
-    /* PC + tablet (481px+): message never shown */
-    @media (min-width: 481px) {
-      #desktop-only-msg,
-      .desktop-only-msg {
-        display: none !important;
-        visibility: hidden !important;
-        pointer-events: none !important;
-        position: absolute !important;
-        left: -9999px !important;
-        width: 0 !important;
-        height: 0 !important;
-        overflow: hidden !important;
-      }
-    }
+    /* Always hide desktop-only message – game is fully responsive on all devices */
+    #desktop-only-msg,
     .desktop-only-msg {
-      display: none;
-      position: fixed;
-      inset: 0;
-      z-index: 9999;
-      background: #16161e;
-      color: #e2e8f0;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 1.5rem;
-      font-family: 'Outfit', system-ui, sans-serif;
+      display: none !important;
+      visibility: hidden !important;
+      pointer-events: none !important;
+      position: absolute !important;
+      left: -9999px !important;
+      width: 0 !important;
+      height: 0 !important;
+      overflow: hidden !important;
     }
-    .desktop-only-msg p {
-      margin: 0 0 1rem;
-      font-size: clamp(0.75rem, 3vw, 1rem);
-      line-height: 1.6;
-      max-width: 90%;
-      font-weight: 500;
-    }
-    .desktop-only-msg-sub {
-      font-size: clamp(0.5rem, 2.4vw, 0.65rem) !important;
-      color: #90cdf4;
-      margin-bottom: 0 !important;
-    }
-    /* Phone only (480px and below): show message, hide map/game */
-    @media (max-width: 480px) {
-      #desktop-only-msg,
-      .desktop-only-msg {
-        display: flex !important;
-        visibility: visible !important;
-        position: fixed !important;
-        left: 0 !important;
-        width: 100% !important;
-        height: 100% !important;
-        overflow: auto !important;
-      }
-      body > *:not(.desktop-only-msg) {
-        display: none !important;
-      }
-    }
+    /* Mobile: show game with inline layout */
     /* Sponsored overlay — professional reward UI */
     .sponsored-overlay {
       position: fixed;
@@ -885,6 +1047,69 @@
     .sponsored-overlay.hidden {
       display: none;
     }
+    .sponsored-overlay:not(.hidden) {
+      overflow: visible;
+    }
+    .sponsored-confetti-wrap {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+      overflow: visible;
+    }
+    .sponsored-confetti-particle {
+      position: absolute;
+      left: 50%;
+      top: 38%;
+      width: 8px;
+      height: 8px;
+      margin-left: -4px;
+      margin-top: -4px;
+      opacity: 0;
+      animation: sponsored-confetti-burst 4s ease-out forwards;
+    }
+    .sponsored-confetti-particle.strip {
+      width: 12px;
+      height: 4px;
+      margin-left: -6px;
+      margin-top: -2px;
+      border-radius: 1px;
+    }
+    .sponsored-confetti-particle.square {
+      width: 8px;
+      height: 8px;
+      margin-left: -4px;
+      margin-top: -4px;
+      border-radius: 1px;
+    }
+    .sponsored-confetti-particle.rect {
+      width: 5px;
+      height: 10px;
+      margin-left: -2.5px;
+      margin-top: -5px;
+      border-radius: 2px;
+    }
+    .sponsored-confetti-particle.circle {
+      width: 8px;
+      height: 8px;
+      margin-left: -4px;
+      margin-top: -4px;
+      border-radius: 50%;
+    }
+    @keyframes sponsored-confetti-burst {
+      0% {
+        opacity: 1;
+        transform: translate(0, 0) rotate(0deg) scale(1);
+      }
+      15% {
+        opacity: 1;
+        transform: translate(var(--confetti-out-x), var(--confetti-out-y)) rotate(var(--confetti-spin)) scale(1);
+      }
+      100% {
+        opacity: 0.75;
+        transform: translate(calc(var(--confetti-out-x) + var(--confetti-drift)), 108vh) rotate(var(--confetti-rot)) scale(0.85);
+      }
+    }
     .sponsored-backdrop {
       position: absolute;
       inset: 0;
@@ -895,6 +1120,7 @@
     .sponsored-modal {
       position: relative;
       z-index: 1;
+      pointer-events: auto;
       max-width: 400px;
       width: 88%;
       padding: 2rem 1.75rem 1.75rem;
@@ -988,21 +1214,17 @@
   </style>
 </head>
 <body>
-  <div id="desktop-only-msg" class="desktop-only-msg" aria-live="polite">
-    <p>Please open this site on a laptop or desktop for the best experience.</p>
-  </div>
   <div id="mobile-map-overlay">
     <div id="mobile-map-inner"></div>
   </div>
   <div id="mobile-hints-bar">
     <div class="hint-bar-inner">
       <div id="mobile-hints-content"></div>
-      <button type="button" id="mobile-hints-minimize" aria-label="Minimize hint">&#10005;</button>
     </div>
-    <div id="mobile-hints-icon" aria-hidden="true">&#128161;</div>
   </div>
   <div class="mobile-start-overlay-wrap" id="mobile-start-wrap" style="display: none;"></div>
   <div id="share-capture-area">
+  <div id="main-game-layout">
   <div id="top-bar-wrap">
     <header class="header">
       <h1 class="game-name">Mili</h1>
@@ -1030,13 +1252,14 @@
         <div class="start-overlay" id="start-overlay">
           <button type="button" class="btn-start" id="btn-start">START</button>
         </div>
-        <iframe id="map-frame" src="map.html" title="Nigeria map"></iframe>
+        <iframe id="map-frame" src="map.html" title="Nigeria map" width="100%" height="333"></iframe>
       </div>
     </div>
     <div class="hints-column hints-column-right" id="hints-column-right">
       <h3 class="hints-column-title">Hints 6–10</h3>
       <div class="hints-grid" id="hints-grid-right"></div>
     </div>
+  </div>
   </div>
 
   <section class="game-over-section" id="game-over">
@@ -1061,6 +1284,7 @@
   <div class="hints-section" id="hints-section" style="display: none;" aria-hidden="true"></div>
   <div id="sponsored-overlay" class="sponsored-overlay hidden">
     <div class="sponsored-backdrop"></div>
+    <div id="sponsored-confetti-wrap" class="sponsored-confetti-wrap" aria-hidden="true"></div>
     <div class="sponsored-modal">
       <button class="sponsored-close" aria-label="Close">&times;</button>
       <div class="sponsored-icon-wrap" aria-hidden="true">
@@ -1503,6 +1727,7 @@
       var mobileHintsBar = document.getElementById('mobile-hints-bar');
       var mobileHintsContent = document.getElementById('mobile-hints-content');
       var topBarWrap = document.getElementById('top-bar-wrap');
+      var mobileHintSelected = 1;
 
       function renderHearts() {
         heartsEl.innerHTML = '';
@@ -1518,11 +1743,49 @@
         return Math.min(1 + wrongGuesses.length, NUM_HINTS);
       }
 
-      function renderHints() {
+      function renderHints(keepSelection) {
         if (!hintsGridLeft || !hintsGridRight || !targetState || hintOrder.length !== NUM_HINTS) return;
+        var titleLeft = document.querySelector('#hints-column-left .hints-column-title');
+        if (titleLeft) titleLeft.textContent = isMobile() ? 'Hints' : 'Hints 1–5';
+        var revealed = getRevealedHintCount();
+        if (isMobile()) {
+          if (!keepSelection) mobileHintSelected = revealed;
+          mobileHintSelected = Math.min(mobileHintSelected, revealed);
+          if (revealed < 1) mobileHintSelected = 1;
+          hintsGridLeft.innerHTML = '';
+          hintsGridRight.innerHTML = '';
+          var wrap = document.createElement('div');
+          wrap.className = 'mobile-hint-selector';
+          var row = document.createElement('div');
+          row.className = 'mobile-hint-numbers';
+          for (var n = 1; n <= NUM_HINTS; n++) {
+            var btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'mobile-hint-num' + (n <= revealed ? ' revealed' : '') + (n === mobileHintSelected ? ' active' : '');
+            btn.textContent = n;
+            btn.setAttribute('aria-label', 'Hint ' + n);
+            (function (num) {
+              btn.addEventListener('click', function () {
+                if (num > revealed) return;
+                mobileHintSelected = num;
+                renderHints(true);
+              });
+            })(n);
+            row.appendChild(btn);
+          }
+          var contentBox = document.createElement('div');
+          contentBox.className = 'mobile-hint-content';
+          contentBox.innerHTML = revealed > 0 ? getHint(targetState, hintOrder[mobileHintSelected - 1]) : '—';
+          wrap.appendChild(row);
+          wrap.appendChild(contentBox);
+          hintsGridLeft.appendChild(wrap);
+          if (mobileHintsBar) { mobileHintsBar.classList.remove('visible'); }
+          updateMapHintHighlight();
+          return;
+        }
         hintsGridLeft.innerHTML = '';
         hintsGridRight.innerHTML = '';
-        var revealed = getRevealedHintCount();
+        mobileHintSelected = revealed;
         var leftCount = 5;
         for (var i = 1; i <= NUM_HINTS; i++) {
           var slot = document.createElement('div');
@@ -1554,13 +1817,15 @@
 
       function startTimer() {
         timerStart = Date.now();
+        var el = document.getElementById('timer');
+        if (!el) return;
         timerInterval = setInterval(function () {
           var ms = Date.now() - timerStart;
           var sec = Math.floor(ms / 1000);
           var min = Math.floor(sec / 60);
           sec = sec % 60;
           var m = (ms % 1000);
-          timerEl.textContent = (min < 10 ? '0' : '') + min + ':' + (sec < 10 ? '0' : '') + sec + '.' + (m < 100 ? '0' : '') + (m < 10 ? '0' : '') + Math.floor(m / 10);
+          el.textContent = (min < 10 ? '0' : '') + min + ':' + (sec < 10 ? '0' : '') + sec + '.' + (m < 100 ? '0' : '') + (m < 10 ? '0' : '') + Math.floor(m / 10);
         }, 10);
       }
 
@@ -1590,29 +1855,18 @@
 
       var mobileStartWrap = document.getElementById('mobile-start-wrap');
       function setupMobileMapOverlay() {
-        if (!mobileOverlay || !mobileOverlayInner || !mapFrame) return;
-        if (!isMobile()) {
-          var outer = document.querySelector('.map-outer');
-          if (outer) {
-            if (mapFrame.parentNode !== outer) outer.appendChild(mapFrame);
-            if (startOverlay && startOverlay.parentNode !== outer) outer.appendChild(startOverlay);
-          }
-          mobileOverlay.style.display = 'none';
-          if (mobileStartWrap) {
-            mobileStartWrap.style.display = 'none';
-            mobileStartWrap.classList.remove('hidden');
-          }
-          if (topBarWrap) topBarWrap.classList.remove('minimized');
-          return;
+        if (!mobileOverlay || !mapFrame) return;
+        var outer = document.querySelector('.map-outer');
+        if (outer) {
+          if (mapFrame.parentNode !== outer) outer.appendChild(mapFrame);
+          if (startOverlay && startOverlay.parentNode !== outer) outer.appendChild(startOverlay);
         }
-        if (mapFrame.parentNode !== mobileOverlayInner) {
-          mobileOverlayInner.appendChild(mapFrame);
+        mobileOverlay.style.display = 'none';
+        if (mobileStartWrap) {
+          mobileStartWrap.style.display = 'none';
+          mobileStartWrap.classList.remove('hidden');
         }
-        mobileOverlay.style.display = 'flex';
-        if (mobileStartWrap && startOverlay && startOverlay.parentNode !== mobileStartWrap) {
-          mobileStartWrap.appendChild(startOverlay);
-          mobileStartWrap.style.display = startOverlay.classList.contains('hidden') ? 'none' : 'flex';
-        }
+        if (topBarWrap) topBarWrap.classList.remove('minimized');
       }
 
       function showMobileHint(html) {
@@ -1761,10 +2015,45 @@
       function setClickedAdToday() {
         try { localStorage.setItem(SPONSORED_DATE_KEY, getTodayDateString()); } catch (e) {}
       }
+      var CONFETTI_COLORS = ['#2dd4bf', '#fbbf24', '#f472b6', '#f8fafc', '#38bdf8', '#a78bfa', '#f97316', '#22c55e', '#eab308', '#ec4899'];
+      var CONFETTI_SHAPES = ['strip', 'strip', 'square', 'square', 'rect', 'circle'];
+      function runSponsoredConfetti() {
+        var wrap = document.getElementById('sponsored-confetti-wrap');
+        if (!wrap) return;
+        wrap.innerHTML = '';
+        var count = 110;
+        for (var i = 0; i < count; i++) {
+          var p = document.createElement('div');
+          var shape = CONFETTI_SHAPES[i % CONFETTI_SHAPES.length];
+          p.className = 'sponsored-confetti-particle ' + shape;
+          var angle = Math.random() * Math.PI * 2;
+          var burstDist = 8 + Math.random() * 25;
+          var outX = (Math.cos(angle) * burstDist) + (Math.random() - 0.5) * 8;
+          var outY = (Math.sin(angle) * burstDist) - Math.random() * 5;
+          var drift = (Math.random() - 0.5) * 80;
+          var spin = (Math.random() - 0.5) * 180;
+          var rot = (Math.random() - 0.5) * 900;
+          var dur = 3.2 + Math.random() * 1.4;
+          var delay = Math.random() * 0.5;
+          p.style.backgroundColor = CONFETTI_COLORS[i % CONFETTI_COLORS.length];
+          p.style.setProperty('--confetti-out-x', outX + 'vw');
+          p.style.setProperty('--confetti-out-y', outY + 'vh');
+          p.style.setProperty('--confetti-drift', drift + 'px');
+          p.style.setProperty('--confetti-spin', spin + 'deg');
+          p.style.setProperty('--confetti-rot', rot + 'deg');
+          p.style.animationDuration = dur + 's';
+          p.style.animationDelay = delay + 's';
+          wrap.appendChild(p);
+        }
+      }
       function maybeShowSponsoredOverlay() {
         if (hasClickedAdToday()) return;
         var ov = document.getElementById('sponsored-overlay');
-        if (ov) { ov.classList.remove('hidden'); ov.style.display = 'flex'; }
+        if (ov) {
+          ov.classList.remove('hidden');
+          ov.style.display = 'flex';
+          runSponsoredConfetti();
+        }
       }
       (function initSponsoredOverlay() {
         var overlay = document.getElementById('sponsored-overlay');
@@ -1773,6 +2062,8 @@
         var closeBtn = overlay.querySelector('.sponsored-close');
         var backdrop = overlay.querySelector('.sponsored-backdrop');
         function hideSponsored() {
+          var wrap = document.getElementById('sponsored-confetti-wrap');
+          if (wrap) wrap.innerHTML = '';
           overlay.classList.add('hidden');
           overlay.style.display = 'none';
         }
@@ -1934,16 +2225,6 @@
           }
         });
       }
-      var mobileHintsMinimize = document.getElementById('mobile-hints-minimize');
-      if (mobileHintsMinimize && mobileHintsBar) {
-        mobileHintsMinimize.addEventListener('click', function (e) {
-          e.preventDefault();
-          e.stopPropagation();
-          mobileHintsBar.classList.add('minimized');
-          mobileHintsBar.classList.add('visible');
-        });
-      }
-
       document.querySelectorAll('.mode-btns a[href="index.html"]').forEach(function (a) {
         a.addEventListener('click', function () { try { localStorage.setItem('mapgame_mode', 'daily'); } catch (e) {} });
       });
