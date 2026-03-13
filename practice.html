@@ -872,6 +872,119 @@
         display: none !important;
       }
     }
+    /* Sponsored overlay — professional reward UI */
+    .sponsored-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 2000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Outfit', 'DM Sans', system-ui, -apple-system, sans-serif;
+    }
+    .sponsored-overlay.hidden {
+      display: none;
+    }
+    .sponsored-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(2, 6, 23, 0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+    .sponsored-modal {
+      position: relative;
+      z-index: 1;
+      max-width: 400px;
+      width: 88%;
+      padding: 2rem 1.75rem 1.75rem;
+      text-align: center;
+      color: #f1f5f9;
+    }
+    .sponsored-close {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: none;
+      border: none;
+      color: #94a3b8;
+      font-size: 1.25rem;
+      font-weight: 300;
+      cursor: pointer;
+      border-radius: 50%;
+      transition: color 0.2s ease, background 0.2s ease;
+    }
+    .sponsored-close:hover {
+      color: #e2e8f0;
+      background: rgba(148, 163, 184, 0.12);
+    }
+    .sponsored-icon-wrap {
+      margin: 0 auto 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: sponsored-icon-float 4s ease-in-out infinite;
+    }
+    .sponsored-gift-emoji {
+      font-size: 4rem;
+      line-height: 1;
+      display: block;
+      text-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.2));
+    }
+    @keyframes sponsored-icon-float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-4px); }
+    }
+    .sponsored-headline {
+      margin: 0 0 0.35rem;
+      font-size: 1.25rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      color: #f8fafc;
+    }
+    .sponsored-label {
+      margin: 0 0 1.5rem;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: #94a3b8;
+      font-weight: 500;
+    }
+    .sponsored-cta {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 180px;
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #0d9488, #0f766e);
+      color: #fff;
+      font-family: inherit;
+      font-size: 0.9rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(13, 148, 136, 0.35);
+      transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+    }
+    .sponsored-cta:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(13, 148, 136, 0.45);
+      filter: brightness(1.05);
+    }
+    .sponsored-note {
+      margin: 1rem 0 0;
+      font-size: 0.7rem;
+      color: #64748b;
+      letter-spacing: 0.02em;
+    }
   </style>
 </head>
 <body>
@@ -946,6 +1059,19 @@
     </div>
   </section>
   <div class="hints-section" id="hints-section" style="display: none;" aria-hidden="true"></div>
+  <div id="sponsored-overlay" class="sponsored-overlay hidden">
+    <div class="sponsored-backdrop"></div>
+    <div class="sponsored-modal">
+      <button class="sponsored-close" aria-label="Close">&times;</button>
+      <div class="sponsored-icon-wrap" aria-hidden="true">
+        <span class="sponsored-gift-emoji" role="img">&#127873;</span>
+      </div>
+      <h2 class="sponsored-headline">You've earned a reward</h2>
+      <p class="sponsored-label">Check a sponsored post</p>
+      <button type="button" id="sponsored-gift" class="sponsored-cta">View offer</button>
+      <p class="sponsored-note">You’ll be taken to a partner site.</p>
+    </div>
+  </div>
   </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" crossorigin="anonymous"></script>
@@ -1577,6 +1703,7 @@
             'Time: <span class="highlight">' + formatElapsed(elapsedSec) + '</span>.<br>' +
             (wrongGuesses.length ? 'Wrong states picked: <span class="highlight">' + wrongGuesses.join(', ') + '</span>.' : '');
           resultsFacts.style.display = 'block';
+          maybeShowSponsoredOverlay();
           return;
         }
         wrongGuesses.push(stateName);
@@ -1587,7 +1714,10 @@
         var revealed = getRevealedHintCount();
         var slots = document.querySelectorAll('#hints-grid-left .hint-slot, #hints-grid-right .hint-slot');
         if (slots[revealed - 1]) slots[revealed - 1].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        if (livesLeft <= 0) showGameOver(false);
+        if (livesLeft <= 0) {
+          showGameOver(false);
+          maybeShowSponsoredOverlay();
+        }
       }
 
       var btnMoon = document.getElementById('btn-moon');
@@ -1620,10 +1750,128 @@
         try { saved = localStorage.getItem(THEME_KEY) || 'dark'; } catch (e) {}
         applyTheme(saved);
       })();
+      var SPONSORED_DATE_KEY = 'mapgame_sponsored_clicked_date';
+      function getTodayDateString() {
+        var d = new Date();
+        return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+      }
+      function hasClickedAdToday() {
+        try { return localStorage.getItem(SPONSORED_DATE_KEY) === getTodayDateString(); } catch (e) { return false; }
+      }
+      function setClickedAdToday() {
+        try { localStorage.setItem(SPONSORED_DATE_KEY, getTodayDateString()); } catch (e) {}
+      }
+      function maybeShowSponsoredOverlay() {
+        if (hasClickedAdToday()) return;
+        var ov = document.getElementById('sponsored-overlay');
+        if (ov) { ov.classList.remove('hidden'); ov.style.display = 'flex'; }
+      }
+      (function initSponsoredOverlay() {
+        var overlay = document.getElementById('sponsored-overlay');
+        if (!overlay) return;
+        var giftBtn = document.getElementById('sponsored-gift');
+        var closeBtn = overlay.querySelector('.sponsored-close');
+        var backdrop = overlay.querySelector('.sponsored-backdrop');
+        function hideSponsored() {
+          overlay.classList.add('hidden');
+          overlay.style.display = 'none';
+        }
+        function openAdAndHide() {
+          setClickedAdToday();
+          try {
+            var capital = (typeof STATE_CAPITALS !== 'undefined' && targetState) ? (STATE_CAPITALS[targetState] || '—') : '—';
+            var elapsedSec = (lastShareResult && lastShareResult.elapsedSec != null) ? lastShareResult.elapsedSec : 0;
+            sessionStorage.setItem('mapgame_practice_restore', JSON.stringify({
+              targetState: targetState,
+              wrongGuesses: wrongGuesses ? wrongGuesses.slice() : [],
+              gameId: gameId,
+              capital: capital,
+              elapsedSec: elapsedSec
+            }));
+          } catch (e) {}
+          window.open('https://omg10.com/4/10713611', '_blank');
+          hideSponsored();
+        }
+        if (giftBtn) giftBtn.addEventListener('click', openAdAndHide);
+        if (closeBtn) closeBtn.addEventListener('click', hideSponsored);
+        if (backdrop) backdrop.addEventListener('click', openAdAndHide);
+      })();
+
+      (function tryRestoreAfterSponsored() {
+        var raw = null;
+        try { raw = sessionStorage.getItem('mapgame_practice_restore'); } catch (e) {}
+        if (!raw) return;
+        var data = null;
+        try { data = JSON.parse(raw); } catch (e) {}
+        if (!data || !data.targetState) return;
+
+        targetState = data.targetState;
+        wrongGuesses = data.wrongGuesses || [];
+        gameId = data.gameId || 1;
+        livesLeft = Math.max(0, LIVES - wrongGuesses.length);
+        hintOrder = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+        lastShareResult = { mode: 'practice', gameId: gameId, won: true, wrongCount: wrongGuesses.length, elapsedSec: data.elapsedSec != null ? data.elapsedSec : 0 };
+
+        gameOverSection.classList.add('visible');
+        gameIdEl.textContent = 'Practice #' + gameId;
+        resultsFacts.innerHTML =
+          'Its capital is <span class="highlight">' + (data.capital || '—') + '</span>.<br>' +
+          'The state is <span class="highlight">' + data.targetState + '</span>.<br>' +
+          'Time: <span class="highlight">' + formatElapsed(data.elapsedSec != null ? data.elapsedSec : 0) + '</span>.<br>' +
+          (wrongGuesses.length ? 'Wrong states picked: <span class="highlight">' + wrongGuesses.join(', ') + '</span>.' : '');
+        resultsFacts.style.display = 'block';
+        startOverlay.classList.add('hidden');
+        if (mobileStartWrap) mobileStartWrap.style.display = 'none';
+        renderHearts();
+        renderHints();
+        var elapsed = data.elapsedSec != null ? data.elapsedSec : 0;
+        var min = Math.floor(elapsed / 60);
+        var sec = elapsed % 60;
+        if (timerEl) timerEl.textContent = (min < 10 ? '0' : '') + min + ':' + (sec < 10 ? '0' : '') + sec + '.000';
+
+        function applyRestoredMapColors() {
+          if (!mapFrame || !mapFrame.contentWindow) return;
+          setPathFill(data.targetState, '#00e676');
+          for (var w = 0; w < (data.wrongGuesses || []).length; w++) setPathFill(data.wrongGuesses[w], '#9e4a4a');
+          mapFrame.contentWindow.postMessage({ type: 'clear-highlight' }, '*');
+          try { sessionStorage.removeItem('mapgame_practice_restore'); } catch (e) {}
+        }
+        if (!mapFrame) {
+          try { sessionStorage.removeItem('mapgame_practice_restore'); } catch (e) {}
+        } else {
+          window.__applyRestoredMapColors = applyRestoredMapColors;
+          var runRestore = function () {
+            if (window.__applyRestoredMapColors) {
+              window.__applyRestoredMapColors();
+              window.__applyRestoredMapColors = null;
+            }
+          };
+          try {
+            if (mapFrame.contentWindow && mapFrame.contentWindow.document && mapFrame.contentWindow.document.readyState === 'complete') {
+              setTimeout(runRestore, 150);
+            }
+          } catch (e) {
+            setTimeout(runRestore, 150);
+          }
+          setTimeout(function () {
+            if (window.__applyRestoredMapColors) {
+              window.__applyRestoredMapColors();
+              window.__applyRestoredMapColors = null;
+            }
+          }, 450);
+        }
+      })();
+
       if (btnMoon) btnMoon.addEventListener('click', toggleTheme);
       mapFrame.addEventListener('load', function () {
         sendThemeToMap();
         updateMapHintHighlight();
+        setTimeout(function () {
+          if (window.__applyRestoredMapColors) {
+            window.__applyRestoredMapColors();
+            window.__applyRestoredMapColors = null;
+          }
+        }, 60);
       });
 
       btnStart.addEventListener('click', function () {
