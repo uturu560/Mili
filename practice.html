@@ -1500,6 +1500,7 @@
       var timerInterval = null;
       var wrongGuesses = [];
 
+      var PRACTICE_STATE_KEY = 'mapgame_practice_state';
       var heartsEl = document.getElementById('hearts');
       var timerEl = document.getElementById('timer');
       var startOverlay = document.getElementById('start-overlay');
@@ -1511,6 +1512,26 @@
       var resultsFacts = document.getElementById('results-facts');
       var lastShareResult = null;
       var SHARE_BASE_URL = 'https://www.mili.website';
+
+      function savePracticeState() {
+        if (!targetState) return;
+        try {
+          var gameOver = gameOverSection && gameOverSection.classList.contains('visible');
+          var elapsedMs = timerStart != null ? (Date.now() - timerStart) : 0;
+          var elapsedSec = Math.floor(elapsedMs / 1000);
+          var payload = {
+            targetState: targetState,
+            wrongGuesses: (wrongGuesses || []).slice(),
+            livesLeft: livesLeft,
+            gameId: gameId,
+            gameOver: gameOver,
+            won: gameOver && lastShareResult ? lastShareResult.won : false,
+            elapsedSec: gameOver ? elapsedSec : null,
+            elapsedMs: gameOver ? null : elapsedMs
+          };
+          localStorage.setItem(PRACTICE_STATE_KEY, JSON.stringify(payload));
+        } catch (e) {}
+      }
       function getShareText() {
         if (!lastShareResult) return 'Think you know Nigeria better?\n' + SHARE_BASE_URL;
         var r = lastShareResult;
@@ -1905,9 +1926,11 @@
           setPathFill(state, '#00e676');
           for (var w = 0; w < wrongGuesses.length; w++) setPathFill(wrongGuesses[w], '#9e4a4a');
         }
+        savePracticeState();
       }
 
       function startGame() {
+        try { localStorage.removeItem(PRACTICE_STATE_KEY); } catch (e) {}
         targetState = pickRandomState();
         livesLeft = LIVES;
         wrongGuesses = [];
@@ -1958,6 +1981,7 @@
             'Time: <span class="highlight">' + formatElapsed(elapsedSec) + '</span>.<br>' +
             (wrongGuesses.length ? 'Wrong states picked: <span class="highlight">' + wrongGuesses.join(', ') + '</span>.' : '');
           resultsFacts.style.display = 'block';
+          savePracticeState();
           maybeShowSponsoredOverlay();
           return;
         }
@@ -2089,7 +2113,74 @@
         if (backdrop) backdrop.addEventListener('click', openAdAndHide);
       })();
 
+      (function tryRestorePracticeState() {
+        var raw = null;
+        try { raw = localStorage.getItem(PRACTICE_STATE_KEY); } catch (e) {}
+        if (!raw) return;
+        var data = null;
+        try { data = JSON.parse(raw); } catch (e) {}
+        if (!data || !data.targetState) return;
+
+        targetState = data.targetState;
+        wrongGuesses = data.wrongGuesses || [];
+        livesLeft = Math.max(0, data.livesLeft != null ? data.livesLeft : LIVES - wrongGuesses.length);
+        gameId = data.gameId || 1;
+        hintOrder = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+        startOverlay.classList.add('hidden');
+        if (mobileStartWrap) mobileStartWrap.style.display = 'none';
+        renderHearts();
+        renderHints();
+
+        if (data.gameOver) {
+          var elapsedSec = data.elapsedSec != null ? data.elapsedSec : 0;
+          var capital = STATE_CAPITALS[targetState] || '—';
+          lastShareResult = { mode: 'practice', gameId: gameId, won: data.won === true, wrongCount: wrongGuesses.length, elapsedSec: elapsedSec };
+          gameOverSection.classList.add('visible');
+          gameIdEl.textContent = 'Practice #' + gameId;
+          resultsFacts.innerHTML =
+            'Its capital is <span class="highlight">' + capital + '</span>.<br>' +
+            'The state is <span class="highlight">' + targetState + '</span>.<br>' +
+            'Time: <span class="highlight">' + formatElapsed(elapsedSec) + '</span>.<br>' +
+            (wrongGuesses.length ? 'Wrong states picked: <span class="highlight">' + wrongGuesses.join(', ') + '</span>.' : '');
+          resultsFacts.style.display = 'block';
+          if (timerEl) {
+            var min = Math.floor(elapsedSec / 60);
+            var sec = elapsedSec % 60;
+            timerEl.textContent = (min < 10 ? '0' : '') + min + ':' + (sec < 10 ? '0' : '') + sec + '.000';
+          }
+        } else {
+          var elapsedMs = (data.elapsedMs != null && data.elapsedMs >= 0) ? data.elapsedMs : 0;
+          timerStart = Date.now() - elapsedMs;
+          startTimer();
+          if (mapFrame && mapFrame.contentWindow) {
+            mapFrame.contentWindow.postMessage({ type: 'start-game', targetState: targetState }, '*');
+          }
+        }
+
+        function applyMapColors() {
+          if (!mapFrame || !mapFrame.contentWindow) return;
+          setPathFill(targetState, '#00e676');
+          for (var w = 0; w < wrongGuesses.length; w++) setPathFill(wrongGuesses[w], '#9e4a4a');
+          mapFrame.contentWindow.postMessage({ type: 'clear-highlight' }, '*');
+        }
+        window.__applyRestoredMapColors = applyMapColors;
+        try {
+          if (mapFrame.contentWindow && mapFrame.contentWindow.document && mapFrame.contentWindow.document.readyState === 'complete') {
+            setTimeout(applyMapColors, 150);
+          }
+        } catch (e) {
+          setTimeout(applyMapColors, 150);
+        }
+        setTimeout(function () {
+          if (window.__applyRestoredMapColors === applyMapColors) {
+            applyMapColors();
+            window.__applyRestoredMapColors = null;
+          }
+        }, 450);
+      })();
+
       (function tryRestoreAfterSponsored() {
+        if (targetState) return;
         var raw = null;
         try { raw = sessionStorage.getItem('mapgame_practice_restore'); } catch (e) {}
         if (!raw) return;
@@ -2213,6 +2304,10 @@
       window.addEventListener('message', function (e) {
         if (e.data && e.data.type === 'map-click' && e.data.state) handleMapClick(e.data.state);
       });
+      window.addEventListener('visibilitychange', function () {
+        if (document.visibilityState === 'hidden') savePracticeState();
+      });
+      window.addEventListener('beforeunload', savePracticeState);
 
       setupMobileMapOverlay();
       window.addEventListener('resize', setupMobileMapOverlay);
